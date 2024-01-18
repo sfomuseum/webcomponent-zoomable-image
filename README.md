@@ -81,7 +81,10 @@ Styling for the markup added by the `zoomable-image` Web Component is defined in
 
 ### JavaScript
 
-The source for `zoomable-image` Web Component is divided in to two files: [src/zoomable-image.js](src/zoomable-image.js) defines the code for registering the Web Component and decorating a `picture` element with additional HTML; [src/zoomable.images.js](src/zoomable.images.js) defines the code for triggering fullscreen mode and rendering the IIIF (Level 0) image tiles.
+The source for `zoomable-image` Web Component is divided in to two files:
+
+* [src/zoomable-image.js](src/zoomable-image.js) defines the code for registering the Web Component and decorating a `picture` element with additional HTML.
+* [src/zoomable.images.js](src/zoomable.images.js) defines the code for triggering fullscreen mode and rendering the IIIF (Level 0) image tiles.
 
 ## See also
 
