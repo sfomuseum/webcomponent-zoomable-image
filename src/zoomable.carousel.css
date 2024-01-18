@@ -1,4 +1,4 @@
-#zoomable-carousel {
+.zoomable-carousel {
     display: grid;
     grid-template-columns:1fr 1fr 1fr 1fr 1fr;
     max-width:320px !important;
