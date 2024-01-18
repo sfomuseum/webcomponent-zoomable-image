@@ -107,7 +107,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    var img_node = document.createElement("img");
 	    
 	    img_node.setAttribute("class", "zoomable-carousel-item zoomable-carousel-visible");
-	    img_node.setAttribute("zoomable-index", j);		
+	    img_node.setAttribute("zoomable-carousel-index", j);		
 	    img_node.setAttribute("src", img_src);
 	    
 	    if (link){
@@ -185,7 +185,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
 	var center_el = visible_images[current_idx];
 	center_el.setAttribute("src", new_src);
-	center_el.setAttribute("data-index", new_idx);
+	center_el.setAttribute("zoomable-carousel-index", new_idx);
 	
 	for (var i=0; i < current_idx; i++){
 	    
@@ -196,7 +196,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    var prev_el = visible_images[i];
 	    prev_el.setAttribute("src", prev_src);
-	    prev_el.setAttribute("data-index", prev_idx);
+	    prev_el.setAttribute("zoomable-carousel-index", prev_idx);
 	}
 	
 	for (var i= (current_idx + 1); i < count_visible; i++){
@@ -206,7 +206,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    var next_el = visible_images[i];
 	    next_el.setAttribute("src", next_src);
-	    next_el.setAttribute("data-index", next_idx);
+	    next_el.setAttribute("zoomable-carousel-index", next_idx);
 	}
     }
 
@@ -267,11 +267,15 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
     advance(){
 
 	var count_images = this._images.length;
+
+	console.log("ADVANCE", count_images);
 	
 	var visible = document.getElementsByClassName("zoomable-carousel-visible");
 	var count = visible.length;
 	
 	var center = Math.floor(count / 2);	// AGAIN, account for image count of 2
+
+	console.log("ATTRS", this._attrs);
 	
 	for (var i=0; i < count; i++){
 	    
@@ -279,18 +283,21 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    var src = el.getAttribute("src");
 	    
-	    var idx = el.getAttribute("data-index");
+	    var idx = el.getAttribute("zoomable-carousel-index");
 	    idx = parseInt(idx);
 	    
 	    var next_idx = (idx == 0) ? count_images - 1 : idx - 1;
 	    var next_src = this._images[next_idx];
 	    
 	    el.setAttribute("src", next_src);
-	    el.setAttribute("data-index", next_idx);
+	    el.setAttribute("zoomable-carousel-index", next_idx);
 	    
 	    if (i == center){
 		var current_attrs = this._attrs[src];
 		var next_attrs = this._attrs[next_src];
+
+		console.log("WOO", i, src, next_src);
+		
 		this.update(current_attrs, next_attrs);
 	    }
 	}
@@ -310,14 +317,14 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    var el = visible[i];
 	    
 	    var src = el.getAttribute("src");
-	    var idx = el.getAttribute("data-index");
+	    var idx = el.getAttribute("zoomable-carousel-index");
 	    idx = parseInt(idx);
 	    
 	    var prev_idx = (idx == (count_images - 1)) ? 0 : idx + 1;
 	    var prev_src = this._images[prev_idx];
 	    
 	    el.setAttribute("src", prev_src);
-	    el.setAttribute("data-index", prev_idx);
+	    el.setAttribute("zoomable-carousel-index", prev_idx);
 	    
 	    if (i == center){
 		    var current_attrs = this._attrs[src];
