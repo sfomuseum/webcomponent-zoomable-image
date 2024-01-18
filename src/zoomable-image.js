@@ -11,9 +11,6 @@ class ZoomableImageElement extends HTMLPictureElement {
 	var id = this.getAttribute("zoomable-image-id");
 	var tiles_url = this.getAttribute("zoomable-tiles-url");
 
-	console.log("ID", id);
-	console.log("TILES", tiles_url);
-	
 	var src_els = Array.from(this.querySelectorAll("source"));
 	var count_src = src_els.length;
 	
@@ -28,6 +25,10 @@ class ZoomableImageElement extends HTMLPictureElement {
 	static_el.setAttribute("class", "zoomable-static");
 	static_el.setAttribute("id", "zoomable-static-" + id);
 
+	if (this.hasAttribute("zoomable-image-control")){
+	    static_el.setAttribute("zoomable-image-control", "true");
+	}
+	
 	var button = document.createElement("button");
 	button.setAttribute("class", "btn btn-sm zoomable-button zoomable-toggle-tiles");
 	button.setAttribute("id", "zoomable-toggle-tiles-" + id);
@@ -37,8 +38,12 @@ class ZoomableImageElement extends HTMLPictureElement {
 	var loading = document.createElement("p");
 	loading.setAttribute("id", "zoomable-loading-" + id);
 	loading.setAttribute("class", "zoomable-loading");
-	// background image url...
 
+	if (this.hasAttribute("zoomable-loading-image")){
+	    var src = this.getAttribute("zoomable-loading-image");
+	    loading.setAttribute("style", "background-image:url(" + src + ")");
+	}
+	
 	loading.appendChild(document.createTextNode("loading"));
 
 	var picture = document.createElement("picture");
@@ -56,9 +61,7 @@ class ZoomableImageElement extends HTMLPictureElement {
 	picture_img.setAttribute("id", "zoomable-picture-default-" + id);
 	picture_img.setAttribute("class", "card-img-top zoomable-picture-default image-square image-zoomable");
 	picture_img.onload = function(){
-	    console.log("LOAD", id);
 	    var el = document.getElementById("zoomable-image-" + id);
-	    console.log("EL", el);
 	    zoomable.images.init(el);	    
 	};
 	
@@ -94,7 +97,6 @@ class ZoomableImageElement extends HTMLPictureElement {
 	wrapper.appendChild(static_el);	
 	wrapper.appendChild(tiles);
 
-	console.log("REPLACE");
 	this.parentNode.replaceChild(wrapper, this);
     }
 }

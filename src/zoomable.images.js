@@ -152,7 +152,7 @@ zoomable.images = (function(){
 		
 		has_iiif = (rsp.status == 200) ? true : false;
 
-		console.log("HAS IIIF", info_url, has_iiif);
+		// console.log("HAS IIIF", info_url, has_iiif);
 		
 		// START OF custom code to account for level0 disconnect
 		// when generating SFOM tiles. Once we've cleaned up all
@@ -183,6 +183,9 @@ zoomable.images = (function(){
 		    } catch(err) {
 			console.log("Unable to determine (IIIF) quality", err);
 		    }
+		    
+		} else {
+		    console.log("Failed to derive IIIF tiles, status code returned was", rsp.status)
 		}
 
 		// END OF custom code to account for level0 disconnect
@@ -335,7 +338,7 @@ zoomable.images = (function(){
 
 	    map.toggleFullscreen();
 
-	    if ((L.Control.Image) && (static_el.getAttribute("data-no-image-control") != "true")){
+	    if ((L.Control.Image) && (static_el.hasAttribute("zoomable-image-control"))){
 
 		var _this = self;
 		
@@ -412,8 +415,6 @@ zoomable.images = (function(){
 	    
 	    var id = el.getAttribute("data-image-id");
 
-	    console.log("ID", id);
-	    
 	    if (! id){
 		console.log("NO IMAGE ID");
 		return;

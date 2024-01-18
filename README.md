@@ -43,22 +43,25 @@ Extend `picture` elements to behave like a `zoomable-image` component. This will
 | is | "zoomable-image" | yes | Declares that the `picture` should behave like a `zoomable-image` Web Component |
 | zoomable-image-id | string | yes | A unique identifier for the image. |
 | zoomable-tiles-url | string | yes | The parent URI where IIIF (Level 0) tiles for the image are stored. |
+| zoomable-image-control | | no | If present this will enable the [sfomuseum/leaflet-image-control](https://github.com/sfomuseum/leaflet-image-control) Leaflet control to allow capturing image crops. | zoomable-loading-image | string | no | If present this image will be set as the background image while loading the image assets defined by the `picture` element. |
 
 ### Example
 
 Given the following markup:
 
 ```
-<picture is="zoomable-image" zoomable-image-id="1729566517" zoomable-tiles-url="https://static.sfomuseum.org/media/172/956/651/7/tiles/">
+<link rel="stylesheet" type="text/css" href="../../dist/zoomable.image.webcomponent.bundle.css" />
+<script type="text/javascript" src="../../dist/zoomable.image.webcomponent.bundle.js"></script>
+
+<picture is="zoomable-image" zoomable-image-id="1729566517" zoomable-tiles-url="https://static.sfomuseum.org/media/172/956/651/7/tiles/" zoomable-image-control>
     <img src="https://static.sfomuseum.org/media/172/956/651/7/1729566517_NCqPczZgLHRnZGn6W782an2aK1pOPg6I_c.jpg" />
 </picture>
-
-<template id="zoomable-image-template">
-    <link rel="stylesheet" type="text/css" href="../../dist/zoomable.image.webcomponent.bundle.css" />	    	    
-</template>
-
-<script type="text/javascript" src="../../dist/zoomable.image.webcomponent.bundle.js"></script>
 ```
+
+Two things to note:
+
+1. This Web Component works with multiple `picture` elements in a single page.
+2. Styles for the Web Component do _not_ need to be defined in an HTML `template` element because it does not use a shadow DOM.
 
 This is what that page would like if the `is="zoomable-image"` attribute is _absent_ or if the `zoomable.image.webcomponent.bundle.js` script is _not_ loaded.
 
@@ -88,3 +91,4 @@ The source for `zoomable-image` Web Component is divided in to two files: [src/z
 * https://github.com/sfomuseum/leaflet-image-control
 * https://github.com/mapbox/leaflet-image
 * https://github.com/eligrey/FileSaver.js
+* https://developer.mozilla.org/en-US/docs/Web/API/Web_components
