@@ -6,6 +6,8 @@ class ZoomableImageElement extends HTMLPictureElement {
     
     connectedCallback(){
 
+	console.log("BUELLER");
+	
 	var tpl_id = "zoomable-image-template";
 	
 	var id = this.getAttribute("zoomable-image-id");

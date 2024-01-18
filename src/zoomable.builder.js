@@ -13,7 +13,7 @@ zoomable.builder = (function(){
 	    var zoomable_el = document.createElement("div");
 	    zoomable_el.setAttribute("class", "zoomable-image");
 	    zoomable_el.setAttribute("id", "zoomable-image-" + args["image-id"]);
-	    zoomable_el.setAttribute("data-image-id", args["image-id"]);
+	    zoomable_el.setAttribute("zoomable-image-id", args["image-id"]);
 
 	    zoomable_el.appendChild(static_el);
 	    zoomable_el.appendChild(tiles_el);
@@ -34,7 +34,7 @@ zoomable.builder = (function(){
 	    var button_el = document.createElement("button");
 	    button_el.setAttribute("class", "btn btn-sm btn-light zoomable-button zoomable-toggle-tiles");
 	    button_el.setAttribute("id", "zoomable-toggle-tiles-" + args["image-id"]);
-	    button_el.setAttribute("data-id", args["image-id"]);
+	    button_el.setAttribute("zoomable-image-id", args["image-id"]);
 	    button_el.setAttribute("title", "View this image in full screen mode");
 
 	    var loading_el = document.createElement("p");
@@ -68,7 +68,7 @@ zoomable.builder = (function(){
 	    var tiles_el = document.createElement("div");
 	    tiles_el.setAttribute("class", "zoomable-tiles");
 	    tiles_el.setAttribute("id", "zoomable-tiles-" + args["image-id"]);
-	    tiles_el.setAttribute("data-tiles-url", args["tiles-url"]);
+	    tiles_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
 
 	    tiles_el.appendChild(map_el);
 	    return tiles_el;
