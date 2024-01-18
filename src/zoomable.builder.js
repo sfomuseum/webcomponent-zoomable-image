@@ -80,6 +80,7 @@ zoomable.builder = (function(){
 	    p.setAttribute("class", "zoomable-picture");
 	    p.setAttribute("id", "zoomable-picture-" + args["image-id"]);
 
+	    /*
 	    var source_map = {
 		"k": "(min-width: 2048px)",
 		"b": "(min-width: 1024px)",
@@ -103,7 +104,8 @@ zoomable.builder = (function(){
 
 		p.appendChild(source_el);
 	    }
-
+	    */
+	    
 	    var class_names = [
 		"zoomable-picture-default",
 	    ];
@@ -112,8 +114,7 @@ zoomable.builder = (function(){
 	    i.setAttribute("id", "zoomable-picture-default-" + args["image-id"]);
 	    i.setAttribute("class", class_names.join(" "));
 	    
-	    i.setAttribute("src", args["image-url-c"]);
-	    i.setAttribute("alt", args["alt"]);
+	    i.setAttribute("src", args["image_src"]);
 
 	    p.appendChild(i);
 	    return p;

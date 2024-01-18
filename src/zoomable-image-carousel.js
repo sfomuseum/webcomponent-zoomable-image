@@ -48,7 +48,9 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    var img_src = img_el.getAttribute("src");
 	    this._images.push(img_src);
 	    
-	    var data_attributes = {};
+	    var data_attributes = {
+		image_src: img_src,
+	    };
 	    
 	    var attrs = img_el.attributes;
 	    var count_attrs = attrs.length;

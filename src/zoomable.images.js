@@ -314,8 +314,6 @@ zoomable.images = (function(){
 		quality: quality,
 	    };
 	    
-	    // var tiles_url = location.href + "tiles/info.json";
-	    
 	    var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 	    tiles_url = tiles_url + "info.json";
 	    
