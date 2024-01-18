@@ -47,7 +47,7 @@ Extend `picture` elements to behave like a `zoomable-image` component. This will
 
 ### Example
 
-Given the following markup:
+Given the [following markup](www/index.html):
 
 ```
 <link rel="stylesheet" type="text/css" href="../../dist/zoomable.image.webcomponent.bundle.css" />
