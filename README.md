@@ -1,8 +1,12 @@
 # webcomponent-zoomable-image
 
-A Web Component to extend the HTML `picture` element to enable fullscreen, interactive, IIIF Level 0 "zoomable" image tiles.
+A Web Component to extend the HTML `picture` element to enable fullscreen, interactive, [IIIF](https://iiif.io/) Level 0 "zoomable" image tiles.
 
 This package supersedes the [sfomuseum/js-zoomable-images](https://github.com/sfomuseum/js-zoomable-images) package. For background, please consult the [zoomable.images.js](https://millsfield.sfomuseum.org/blog/2020/09/14/js-zoomable/) blog post.
+
+## Important
+
+This package does not produce IIIF Level 0 image tiles. You will need to use something like the `iiif-tile-seed` program (which is part of the [go-iiif](https://github.com/go-iiif/go-iiif#iiif-tile-seed) package) or equivalent to generate tiles and host them somewhere the `zoomable-image` Web Component can access them.
 
 ## Documentation
 
@@ -95,3 +99,4 @@ The source for `zoomable-image` Web Component is divided in to two files:
 * https://github.com/mapbox/leaflet-image
 * https://github.com/eligrey/FileSaver.js
 * https://developer.mozilla.org/en-US/docs/Web/API/Web_components
+* https://iiif.io/
