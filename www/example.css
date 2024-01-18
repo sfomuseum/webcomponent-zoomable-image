@@ -1,6 +1,10 @@
 #grid{
 	display: grid;
 	grid-template-columns:1fr 1fr;
-	gap: 0px 25px;
+	gap: 75px 25px;
 	width: 95vw;
+}
+
+picture {
+	
 }
