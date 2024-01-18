@@ -42,7 +42,7 @@ zoomable.images = (function(){
 	
 	    ot = ot[0];
 	    
-	    var id = ot.getAttribute("data-image-id");
+	    var id = ot.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
 		return;
@@ -205,7 +205,7 @@ zoomable.images = (function(){
 	'show_static': function(e){
 	    
 	    var el = e.target;
-	    var id = el.getAttribute("data-image-id");
+	    var id = el.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
 		console.log("Missing ID")
@@ -238,7 +238,7 @@ zoomable.images = (function(){
 	'show_tiles': function(e){
 	    
 	    var el = e.target;
-	    var id = el.getAttribute("data-image-id");
+	    var id = el.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
 		console.log("Missing ID")
@@ -303,7 +303,7 @@ zoomable.images = (function(){
 	    map.fullscreenControl.setPosition('topright');
 	    map.zoomControl.setPosition('bottomright');	   
 	    
-	    var quality = map_el.getAttribute("data-iiif-quality");
+	    var quality = map_el.getAttribute("zoomable-iiif-quality");
 
 	    if (! quality){
 		quality = iiif_quality;
@@ -316,7 +316,7 @@ zoomable.images = (function(){
 	    
 	    // var tiles_url = location.href + "tiles/info.json";
 	    
-	    var tiles_url = tiles_el.getAttribute("data-tiles-url");
+	    var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 	    tiles_url = tiles_url + "info.json";
 	    
 	    var tile_layer = L.tileLayer.iiif(tiles_url, tile_opts)
@@ -358,7 +358,7 @@ zoomable.images = (function(){
 			var ot = document.getElementsByClassName("zoomable-image");
 			ot = ot[0];
 			
-			var id = ot.getAttribute("data-image-id");
+			var id = ot.getAttribute("zoomable-image-id");
 			
 			var parts = [
 			    ymd,
@@ -402,7 +402,7 @@ zoomable.images = (function(){
 	    
 	    ot = ot[0];
 	    
-	    var id = ot.getAttribute("data-image-id");
+	    var id = ot.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
 		return;
@@ -413,7 +413,7 @@ zoomable.images = (function(){
 	
 	'init': function(el){
 	    
-	    var id = el.getAttribute("data-image-id");
+	    var id = el.getAttribute("zoomable-image-id");
 
 	    if (! id){
 		console.log("NO IMAGE ID");
@@ -422,20 +422,20 @@ zoomable.images = (function(){
 	    
 	    var tiles_id = "zoomable-tiles-" +id;
 	    var tiles_el = document.getElementById(tiles_id);
-	    var tiles_url = tiles_el.getAttribute("data-tiles-url");
+	    var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 	    
 	    var mk_tiles_func = function(id){
 		
 		var tiles_id = "zoomable-tiles-" +id;
 		var tiles_el = document.getElementById(tiles_id);
-		var tiles_url = tiles_el.getAttribute("data-tiles-url");
+		var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 		
 		var tiles_button = document.getElementById("zoomable-toggle-tiles-" + id);
 		
 		return function(){
 
 		    if (has_iiif){		
-			tiles_button.setAttribute("data-image-id", id);
+			tiles_button.setAttribute("zoomable-image-id", id);
 			tiles_button.onclick = self.show_tiles;
 			tiles_button.style.display = "block";
 		    }

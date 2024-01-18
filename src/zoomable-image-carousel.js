@@ -238,8 +238,8 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
     update(current_attrs, updated_attrs){
 	
-	// console.log("CURRENT", current_attrs);
-	// console.log("UPDATED", updated_attrs);
+	console.log("CURRENT", current_attrs);
+	console.log("UPDATED", updated_attrs);
 	
 	location.hash = updated_attrs["image-id"];
 	

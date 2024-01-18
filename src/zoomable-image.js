@@ -6,8 +6,6 @@ class ZoomableImageElement extends HTMLPictureElement {
     
     connectedCallback(){
 
-	console.log("BUELLER");
-	
 	var tpl_id = "zoomable-image-template";
 	
 	var id = this.getAttribute("zoomable-image-id");
@@ -21,7 +19,7 @@ class ZoomableImageElement extends HTMLPictureElement {
 	var wrapper = document.createElement("div");
 	wrapper.setAttribute("class", "zoomable-image");
 	wrapper.setAttribute("id", "zoomable-image-" + id);
-	wrapper.setAttribute("data-image-id", id);
+	wrapper.setAttribute("zoomable-image-id", id);
 	
 	var static_el = document.createElement("div");
 	static_el.setAttribute("class", "zoomable-static");
@@ -34,7 +32,7 @@ class ZoomableImageElement extends HTMLPictureElement {
 	var button = document.createElement("button");
 	button.setAttribute("class", "btn btn-sm zoomable-button zoomable-toggle-tiles");
 	button.setAttribute("id", "zoomable-toggle-tiles-" + id);
-	button.setAttribute("data-id", id);
+	button.setAttribute("zoomable-image-id", id);
 	button.setAttribute("title", "View this image in full screen mode");
 
 	var loading = document.createElement("p");
@@ -76,7 +74,7 @@ class ZoomableImageElement extends HTMLPictureElement {
 	var tiles = document.createElement("div");
 	tiles.setAttribute("class", "zoomable-tiles");
 	tiles.setAttribute("id", "zoomable-tiles-" + id);
-	tiles.setAttribute("data-tiles-url", tiles_url);
+	tiles.setAttribute("zoomable-tiles-url", tiles_url);
 
 	var tiles_map = document.createElement("div");
 	tiles_map.setAttribute("class", "zoomable-map");
