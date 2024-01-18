@@ -60,7 +60,7 @@ Given the [following markup](www/index.html):
 
 Two things to note:
 
-1. This Web Component works with multiple `picture` elements in a single page.
+1. This Web Component works with [multiple `picture` elements](www/multi.html) in a single page.
 2. Styles for the Web Component do _not_ need to be defined in an HTML `template` element because it does not use a shadow DOM.
 
 This is what that page would like if the `is="zoomable-image"` attribute is _absent_ or if the `zoomable.image.webcomponent.bundle.js` script is _not_ loaded.
