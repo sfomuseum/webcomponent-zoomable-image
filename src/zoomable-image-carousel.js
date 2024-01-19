@@ -43,7 +43,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
 	    var img_el = pic_el.querySelector("img");
 	    var img_src = img_el.getAttribute("src");
-	    
+
 	    this._images.push(img_src);
 	    
 	    var data_attributes = {
@@ -139,8 +139,18 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    z.setAttribute("zoomable-image-control", "true");
 	}
 	
-	for (const c of first_pic.children){
-	    z.appendChild(c);
+	var source_els = first_pic.querySelectorAll("source")
+	var img_els = first_pic.querySelectorAll("img")
+
+	var count_sources = source_els.length;
+	var count_imgs = img_els.length;
+
+	for (var i=0; i < count_sources; i++){
+	    z.appendChild(source_els[i]);
+	}
+
+	for (var i=0; i < count_imgs; i++){
+	    z.appendChild(img_els[i]);
 	}
 
 	var wrapper = document.createElement("div");
@@ -464,7 +474,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	var class_names = [
 	    "zoomable-picture-default",
 	];
-	
+
 	var i = document.createElement("img");
 	i.setAttribute("id", "zoomable-picture-default-" + args["image-id"]);
 	i.setAttribute("class", class_names.join(" "));
@@ -472,7 +482,6 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	i.setAttribute("src", args["image_src"]);
 	
 	p.appendChild(i);	    
-	
 	return p;
     }
     
