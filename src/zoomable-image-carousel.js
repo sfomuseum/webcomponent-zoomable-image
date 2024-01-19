@@ -33,7 +33,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	var count_pictures = pictures.length;
 
 	if (count_pictures < this.visible) {
-	    this.setAttribute("class", "zoomable-carousel-" + count_imges);
+	    this.setAttribute("class", "zoomable-carousel-" + count_pictures);
 	}
 
 	for (var i=0; i < count_pictures; i++){
@@ -81,7 +81,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	var panes = this.visible;
 	
 	if (count_pictures < this.visible){
-	    panes = count_imeags;
+	    panes = count_pictures;
 	}
 	
 	for (var i=0; i < panes; i++){
