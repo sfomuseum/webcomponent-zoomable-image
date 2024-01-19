@@ -48,23 +48,10 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    var data_attributes = {
 		image_src: img_src,
+		"image-id": pic_el.getAttribute("zoomable-image-id"),
+		"tiles-url": pic_el.getAttribute("zoomable-tiles-url"),
+		"picture": pic_el,
 	    };
-	    
-	    var attrs = img_el.attributes;
-	    var count_attrs = attrs.length;
-	    
-	    for (var j=0; j< count_attrs; j++){
-		
-		var attr = attrs[j];
-		var key = attr.name;
-		
-		if (! key.startsWith("zoomable-")){
-		    continue;
-		}
-		
-		var short_key = key.replace("zoomable-", "");
-		data_attributes[short_key] = attr.value;
-	    }
 	    
 	    this._attrs[img_src] = data_attributes;
 	    
@@ -158,7 +145,12 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	wrapper.appendChild(z);
 	wrapper.appendChild(carousel);
 
-	this.parentNode.replaceChild(wrapper, this);	
+	this.parentNode.replaceChild(wrapper, this);
+
+	if (this.hasAttribute("zoomable-keyboard-events")){
+	    console.log("WOO");
+	    this.init_keyboard();
+	}
     }
 
     assign(id) {
@@ -244,12 +236,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	
 	location.hash = updated_attrs["image-id"];
 
-	var idx = this.index_for_id(updated_attrs["image-id"]);
-	console.log(idx, this._pictures[idx].children);
-
-	console.log("WUT", current_attrs["image-id"]);
-	
-	var updated_zoomable = zoomable.builder.make_zoomable_element(updated_attrs);
+	var updated_zoomable = this.make_zoomable_element(updated_attrs);
 	var current_zoomable = document.getElementById("zoomable-image-" + current_attrs["image-id"]);
 		
 	current_zoomable.parentNode.replaceChild(updated_zoomable, current_zoomable);
@@ -333,6 +320,155 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 		}
 	}
     }
+
+    init_keyboard(){
+
+	var _self = this;
+	
+	document.addEventListener('keydown', function(e){
+	    
+	    if (e.keyCode == 37){
+		_self.rewind();
+	    }
+	    
+	    if (e.keyCode == 39){
+		_self.advance();
+	    }
+	    
+	});
+	
+	/*
+	   var el = document.getElementById("pagination-blurb");
+	   
+	   // https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser/45666491#45666491
+	   var is_mobile = /Mobi/i.test(window.navigator.userAgent)
+	   
+	   if ((el) && (! is_mobile)){
+	   
+	   var previous = document.createElement("span");
+	   previous.setAttribute("class", "hey-look");
+	   previous.setAttribute("style", "color:#555;");
+	   previous.appendChild(document.createTextNode("←"));
+	   
+	   var next = document.createElement("span");
+	   next.setAttribute("class", "hey-look");
+	   next.setAttribute("style", "color:#555;");
+	   next.appendChild(document.createTextNode("→"));
+	   
+	   el.appendChild(document.createTextNode("you can also use the "));
+	   el.appendChild(previous);
+	   el.appendChild(document.createTextNode(" and "));
+	   el.appendChild(next);
+	   el.appendChild(document.createTextNode(" arrow keys on your keyboard to navigate between images"));      
+	   
+	   el.style.display = "block";
+	   }
+	 */
+    }
+
+    // START OF reconcile this with the code in zoomable-image.js
+    
+    make_zoomable_element(args){
+	
+	var static_el = this.make_static_element(args);
+	var tiles_el = this.make_tiles_element(args);
+	
+	var zoomable_el = document.createElement("div");
+	zoomable_el.setAttribute("class", "zoomable-image");
+	zoomable_el.setAttribute("id", "zoomable-image-" + args["image-id"]);
+	zoomable_el.setAttribute("zoomable-image-id", args["image-id"]);
+	
+	zoomable_el.appendChild(static_el);
+	zoomable_el.appendChild(tiles_el);
+	
+	return zoomable_el;
+    }
+    
+    make_static_element(args){
+	
+	var picture_el = this.make_picture_element(args);
+	
+	var link_el = document.createElement("a");
+	link_el.setAttribute("class", "zoomable-image-link");
+	link_el.setAttribute("src", "#");
+	
+	link_el.appendChild(picture_el);
+	
+	var button_el = document.createElement("button");
+	button_el.setAttribute("class", "btn btn-sm btn-light zoomable-button zoomable-toggle-tiles");
+	button_el.setAttribute("id", "zoomable-toggle-tiles-" + args["image-id"]);
+	button_el.setAttribute("zoomable-image-id", args["image-id"]);
+	button_el.setAttribute("title", "View this image in full screen mode");
+	
+	var loading_el = document.createElement("p");
+	loading_el.setAttribute("id", "zoomable-loading-" + args["image-id"]);
+	loading_el.setAttribute("class", "zoomable-loading");
+	loading_el.setAttribute("style", "background-image:url(" + args["image-url-ds"] + ")");
+	
+	var span_el = document.createElement("span");
+	span_el.setAttribute("class", "zoomable-loading-text");
+	span_el.appendChild(document.createTextNode("loading image"));
+	
+	loading_el.appendChild(span_el);
+	
+	var static_el = document.createElement("div");
+	static_el.setAttribute("class", "zoomable-static");
+	static_el.setAttribute("id", "zoomable-static-" + args["image-id"]);	   
+	
+	static_el.appendChild(button_el);
+	static_el.appendChild(loading_el);
+	static_el.appendChild(link_el);
+	
+	return static_el;
+    }
+    
+    make_tiles_element(args){
+	
+	var map_el = document.createElement("div");
+	map_el.setAttribute("class", "zoomable-map");
+	map_el.setAttribute("id", "zoomable-map-" + args["image-id"]);
+	
+	var tiles_el = document.createElement("div");
+	tiles_el.setAttribute("class", "zoomable-tiles");
+	tiles_el.setAttribute("id", "zoomable-tiles-" + args["image-id"]);
+	tiles_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
+	
+	tiles_el.appendChild(map_el);
+	return tiles_el;
+    }
+    
+    make_picture_element(args){
+	
+	var p = document.createElement("picture");
+	p.setAttribute("class", "zoomable-picture");
+	p.setAttribute("id", "zoomable-picture-" + args["image-id"]);
+	p.setAttribute("id", "zoomable-tiles-url-" + args["tiles-url"]);	    
+	
+	if (args["picture"]){
+	    var source_els = args["picture"].querySelectorAll("source");
+	    var count_source = source_els.length;
+	    
+	    for (var i=0; i < count_source; i++){
+		p.appendChild(source_els[i]);
+	    }
+	}
+	
+	var class_names = [
+	    "zoomable-picture-default",
+	];
+	
+	var i = document.createElement("img");
+	i.setAttribute("id", "zoomable-picture-default-" + args["image-id"]);
+	i.setAttribute("class", class_names.join(" "));
+	
+	i.setAttribute("src", args["image_src"]);
+	
+	p.appendChild(i);	    
+	
+	return p;
+    }
+    
+    // END OF reconcile this with the code in zoomable-image.js    
     
 }
 
