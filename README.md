@@ -100,8 +100,8 @@ Extend `ul` elements to behave like a `zoomable-image-carousel` component. This 
 
 | Name | Value | Required | Notes |
 | --- | --- | --- | --- |
-| is | "zoomable-image-carouse" | yes | Declares that the `ul` element should behave like a `zoomable-image-carousel` Web Component |
-| zoomable-keyboard-event | | no | If present this will enable events for the right and left arrow keys to rewind or advance the carousel |
+| is | "zoomable-image-carousel" | yes | Declares that the `ul` element should behave like a `zoomable-image-carousel` Web Component |
+| zoomable-keyboard-events | | no | If present this will enable events for the right and left arrow keys to rewind or advance the carousel |
 
 ### Example
 
