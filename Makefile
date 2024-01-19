@@ -14,7 +14,8 @@ dist-js:
 		lib/leaflet-iiif.js \
 		lib/FileSaver.min.js \
 		src/zoomable.images.js \
-		src/zoomable-image.js
+		src/zoomable-image.js \
+		src/zoomable-image-carousel.js
 
 dist-css:
 	minify --bundle \
@@ -22,4 +23,5 @@ dist-css:
 		lib/leaflet.css \
 		lib/leaflet.fullscreen.css \
 		lib/leaflet.image.control.css \
-		src/zoomable.images.css
+		src/zoomable.images.css \
+		src/zoomable.carousel.css

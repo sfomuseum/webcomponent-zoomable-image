@@ -148,7 +148,26 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	this.parentNode.replaceChild(wrapper, this);
 
 	if (this.hasAttribute("zoomable-keyboard-events")){
-	    console.log("WOO");
+
+	    var pagination_el = document.createElement("div");
+	    pagination_el.setAttribute("class", "zoomable-pagination-blurb");
+
+	    var previous = document.createElement("span");
+	    previous.setAttribute("class", "zoomable-pagination-blurb-arrow");
+	    previous.appendChild(document.createTextNode("←"));
+	    
+	    var next = document.createElement("span");
+	    next.setAttribute("class", "zoomable-pagination-blurb-arrow");
+	    next.appendChild(document.createTextNode("→"));
+	    
+	    pagination_el.appendChild(document.createTextNode("you can also use the "));
+	    pagination_el.appendChild(previous);
+	    pagination_el.appendChild(document.createTextNode(" and "));
+	    pagination_el.appendChild(next);
+	    pagination_el.appendChild(document.createTextNode(" arrow keys on your keyboard to navigate between images"));      
+	    
+	    wrapper.appendChild(pagination_el);
+	    
 	    this.init_keyboard();
 	}
     }
@@ -336,34 +355,6 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    }
 	    
 	});
-	
-	/*
-	   var el = document.getElementById("pagination-blurb");
-	   
-	   // https://stackoverflow.com/questions/11381673/detecting-a-mobile-browser/45666491#45666491
-	   var is_mobile = /Mobi/i.test(window.navigator.userAgent)
-	   
-	   if ((el) && (! is_mobile)){
-	   
-	   var previous = document.createElement("span");
-	   previous.setAttribute("class", "hey-look");
-	   previous.setAttribute("style", "color:#555;");
-	   previous.appendChild(document.createTextNode("←"));
-	   
-	   var next = document.createElement("span");
-	   next.setAttribute("class", "hey-look");
-	   next.setAttribute("style", "color:#555;");
-	   next.appendChild(document.createTextNode("→"));
-	   
-	   el.appendChild(document.createTextNode("you can also use the "));
-	   el.appendChild(previous);
-	   el.appendChild(document.createTextNode(" and "));
-	   el.appendChild(next);
-	   el.appendChild(document.createTextNode(" arrow keys on your keyboard to navigate between images"));      
-	   
-	   el.style.display = "block";
-	   }
-	 */
     }
 
     // START OF reconcile this with the code in zoomable-image.js
