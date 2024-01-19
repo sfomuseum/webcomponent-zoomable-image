@@ -50,7 +50,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 		image_src: img_src,
 		"image-id": pic_el.getAttribute("zoomable-image-id"),
 		"tiles-url": pic_el.getAttribute("zoomable-tiles-url"),
-		"image-control": pic_el.hastAttribute("zoomable-image-control"),		
+		"image-control": pic_el.hasAttribute("zoomable-image-control"),		
 		"picture": pic_el,
 	    };
 
@@ -126,6 +126,15 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	
 	carousel.appendChild(advance_el);
 
+	/*
+	if (location.hash != ""){
+	    var hash = location.hash.substr(1);
+	    var id = hash;
+	    console.log("ID", id);
+	    this.assign(id);
+	}
+	*/
+	
 	var first_pic = this._pictures[0];
 	
 	/*
@@ -191,7 +200,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    return false;
 	}
 	
-	var current_el = visible_imeags[current_idx];
+	var current_el = visible_images[current_idx];
 	
 	if (! current_el){
 	    console.log("Can't get element for index " + current_idx);
