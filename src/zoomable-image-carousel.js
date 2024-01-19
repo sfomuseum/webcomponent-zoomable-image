@@ -27,6 +27,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	// Start by creating a new <ul> element that will eventually replace 'this'.
 	
 	var carousel = document.createElement("ul");
+	carousel.setAttribute("id", this.getAttribute("id"));
 	carousel.setAttribute("class", "zoomable-carousel");
 	
 	var pictures = this.querySelectorAll("picture");
@@ -154,6 +155,8 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	}
 
 	var wrapper = document.createElement("div");
+	wrapper.setAttribute("class", "zoomable-carousel-wrapper");
+
 	wrapper.appendChild(z);
 	wrapper.appendChild(carousel);
 
