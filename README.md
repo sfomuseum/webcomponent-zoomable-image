@@ -15,7 +15,7 @@ Documentation is incomplete at this time. Consult the [www](www) folder for work
 Source files for the Web Components, and related CSS, are stored in the [src](src) folder. External libraries are kept in the [lib](lib) folder. Bundled distribution files are kept in the [dist](dist) folder and generated using the `dist-all` Makefile target (which depends on [minify](https://github.com/tdewolff/minify) being installed).
 
 ```
-$> make dist-all
+> make dist-all
 minify --bundle \
 		--output dist/zoomable.image.webcomponent.bundle.js \
 		lib/leaflet.js \
@@ -25,15 +25,17 @@ minify --bundle \
 		lib/leaflet-iiif.js \
 		lib/FileSaver.min.js \
 		src/zoomable.images.js \
-		src/zoomable-image.js
-(11.81425ms, 187 kB, 166 kB,  88.6%,  16 MB/s) - (lib/leaflet.js + lib/leaflet-image.js + lib/leaflet.image.control.js + lib/leaflet.fullscreen.js + lib/leaflet-iiif.js + lib/FileSaver.min.js + src/zoomable.images.js + src/zoomable-image.js) to dist/zoomable.image.webcomponent.bundle.js
+		src/zoomable-image.js \
+		src/zoomable-image-carousel.js
+(11.289875ms, 200 kB, 173 kB,  86.7%,  18 MB/s) - (lib/leaflet.js + lib/leaflet-image.js + lib/leaflet.image.control.js + lib/leaflet.fullscreen.js + lib/leaflet-iiif.js + lib/FileSaver.min.js + src/zoomable.images.js + src/zoomable-image.js + src/zoomable-image-carousel.js) to dist/zoomable.image.webcomponent.bundle.js
 minify --bundle \
 		--output dist/zoomable.image.webcomponent.bundle.css \
 		lib/leaflet.css \
 		lib/leaflet.fullscreen.css \
 		lib/leaflet.image.control.css \
-		src/zoomable.images.css
-(757.625µs,  49 kB,  42 kB,  85.4%,  64 MB/s) - (lib/leaflet.css + lib/leaflet.fullscreen.css + lib/leaflet.image.control.css + src/zoomable.images.css) to dist/zoomable.image.webcomponent.bundle.css
+		src/zoomable.images.css \
+		src/zoomable.carousel.css
+(960.625µs,  49 kB,  42 kB,  85.4%,  51 MB/s) - (lib/leaflet.css + lib/leaflet.fullscreen.css + lib/leaflet.image.control.css + src/zoomable.images.css + src/zoomable.carousel.css) to dist/zoomable.image.webcomponent.bundle.css
 ```
 
 ## picture@is="zoomable-image"
@@ -89,6 +91,71 @@ The source for `zoomable-image` Web Component is divided in to two files:
 
 * [src/zoomable-image.js](src/zoomable-image.js) defines the code for registering the Web Component and decorating a `picture` element with additional HTML.
 * [src/zoomable.images.js](src/zoomable.images.js) defines the code for triggering fullscreen mode and rendering the IIIF (Level 0) image tiles.
+
+## ul@is="zoomable-image-carousel"
+
+Extend `ul` elements to behave like a `zoomable-image-carousel` component. This will decorate the `ul` element (and all its children) with markup to display the first element as a `zoomable-image` element (see above) and its immediate neighbours in a carousel-style grid, with next and previous arrows below. Pressing the arrows will advance or rewind the carousel updating the main `zoomable-image` element.
+
+### Attributes
+
+| Name | Value | Required | Notes |
+| --- | --- | --- | --- |
+| is | "zoomable-image-carouse" | yes | Declares that the `ul` element should behave like a `zoomable-image-carousel` Web Component |
+| zoomable-keyboard-event | | no | If present this will enable events for the right and left arrow keys to rewind or advance the carousel |
+
+### Example
+
+```
+<link rel="stylesheet" type="text/css" href="../../dist/zoomable.image.webcomponent.bundle.css" />
+<script type="text/javascript" src="../../dist/zoomable.image.webcomponent.bundle.js"></script>
+
+<ul is="zoomable-image-carousel" zoomable-keyboard-events>
+    <li>
+	<picture zoomable-image-id="1527842879" zoomable-tiles-url="https://static.sfomuseum.org/media/152/784/287/9/tiles/">
+	    <img src="https://static.sfomuseum.org/media/152/784/287/9/1527842879_Ag9JNIHX7o2LpjurG7YBMhNyV8Gqiv8h_c.jpg" />
+	</picture>
+    </li>
+    <li>
+	<picture zoomable-image-id="1729566517" zoomable-tiles-url="https://static.sfomuseum.org/media/172/956/651/7/tiles/">
+	    <img src="https://static.sfomuseum.org/media/172/956/651/7/1729566517_NCqPczZgLHRnZGn6W782an2aK1pOPg6I_c.jpg" />
+	</picture>
+    </li>
+    <li>
+	<picture zoomable-image-id="1796444669" zoomable-tiles-url="https://static.sfomuseum.org/media/179/644/466/9/tiles/">
+	    <img src="https://static.sfomuseum.org/media/179/644/466/9/1796444669_PsHm5X1lQ6os1HkZgXBjBtEoafUENTRQ_n.jpg" />
+	</picture>
+    </li>
+</ul>
+```
+
+A few things to note:
+
+1. The `zoomable-image-carousel` element expects its list items to be populated with `picture` elements. The elements should have all the required (and optional) attribute of the `zoomable-image` element, described above, _except_ the `is="zoomable-image"` attribute.
+2. Styles for the Web Component do _not_ need to be defined in an HTML `template` element because it does not use a shadow DOM.
+
+This is what that page would like if the `is="zoomable-image-carousel"` attribute is _absent_ or if the `zoomable.image.webcomponent.bundle.js` script is _not_ loaded.
+
+![](docs/images/zoomable-carousel-disabled.png)
+
+This is what that page would like if the `is="zoomable-image-carousel"` attribute is _present_ (and the `zoomable.image.webcomponent.bundle.js` script has been loaded).
+
+![](docs/images/zoomable-carousel.png)
+
+### CSS
+
+Styling for the markup added by the `zoomable-image-carousel` Web Component is defined in the [src/zoomable.images.css](javascript/zoomable.images.css) and the [src/zoomable.carousel.css](javascript/zoomable.carousel.css) files.
+
+### JavaScript
+
+The source for `zoomable-image-carousel` Web Component is divided in to two files:
+
+* [src/zoomable-image.js](src/zoomable-image-carousel.js) defines the code for registering the Web Component and decorating a `ul` element with additional HTML.
+* [src/zoomable-image.js](src/zoomable-image.js) defines the code for registering the Web Component and decorating a `picture` element with additional HTML.
+* [src/zoomable.images.js](src/zoomable.images.js) defines the code for triggering fullscreen mode and rendering the IIIF (Level 0) image tiles.
+
+## ul@is="zoomable-image-carousel"
+
+Extend `ul` elements to behave like a `zoomable-image-carousel` component. This will decorate the `ul` element (and all its children) with markup to display the first element as a `zoomable-image` element (see above) and its immediate neighbours in a carousel-style grid, with next and previous arrows below. Pressing the arrows will advance or rewind the carousel updating the main `zoomable-image` element.
 
 ## See also
 
