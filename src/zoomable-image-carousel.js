@@ -18,6 +18,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	}
 
 	this._images = [];
+	this._pictures = [];
 	this._links = {};
 	this._attrs = {};
 
@@ -28,19 +29,21 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	var carousel = document.createElement("ul");
 	carousel.setAttribute("class", "zoomable-carousel");
 	
-	var images = this.querySelectorAll("img");
-	var count_images = images.length;
+	var pictures = this.querySelectorAll("picture");
+	var count_pictures = pictures.length;
 
-	if (count_images < this.visible) {
+	if (count_pictures < this.visible) {
 	    this.setAttribute("class", "zoomable-carousel-" + count_imges);
 	}
 
-	for (var i=0; i < count_images; i++){
-	    
-	    var img_el = images[i];
-	    img_el.setAttribute("class", "zoomable-carousel-image");
-	    
+	for (var i=0; i < count_pictures; i++){
+
+	    var pic_el = pictures[i];
+	    this._pictures.push(pic_el);
+
+	    var img_el = pic_el.querySelector("img");
 	    var img_src = img_el.getAttribute("src");
+	    
 	    this._images.push(img_src);
 	    
 	    var data_attributes = {
@@ -89,13 +92,13 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	
 	var panes = this.visible;
 	
-	if (count_images < this.visible){
+	if (count_pictures < this.visible){
 	    panes = count_imeags;
 	}
 	
 	for (var i=0; i < panes; i++){
 	    
-	    var j = (i == 0) ? count_images - 1 : i - 1;
+	    var j = (i == 0) ? count_pictures - 1 : i - 1;
 	    
 	    var img_src = this._images[j];
 	    var img_node = document.createElement("img");
@@ -111,8 +114,6 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 		    var src = el.getAttribute("src");
 		    var attrs = this._attrs[src];
 		    var id = attrs["image-id"];
-
-		    console.log("CLICK", id);
 		    this.assign(id);
 		    return false;
 		};
@@ -137,8 +138,8 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	
 	carousel.appendChild(advance_el);
 
-	var first_im = images[0];
-
+	var first_pic = this._pictures[0];
+	
 	/*
 	   Note the way we are calling new ZoomableImageElement and not document.createElement("picture")
 	   and then assigning an is="zoomable-image" property. When we do the latter the Web Component
@@ -146,15 +147,12 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	 */
 	
 	var z = new ZoomableImageElement();
-	z.setAttribute("zoomable-image-id", first_im.getAttribute("zoomable-image-id"));
-	z.setAttribute("zoomable-tiles-url", first_im.getAttribute("zoomable-tiles-url"));
-	
-	var picture_im = document.createElement("img");
-	picture_im.setAttribute("src", first_im.getAttribute("src"));	
+	z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
+	z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
 
-	z.appendChild(picture_im);
-	
-	// this.parentNode.prepend(z);
+	for (const c of first_pic.children){
+	    z.appendChild(c);
+	}
 
 	var wrapper = document.createElement("div");
 	wrapper.appendChild(z);
@@ -194,7 +192,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
 	// now update the bookends
 	
-	var count_images = this._images.length;
+	var count_pictures = this._images.length;
 
 	var center_el = visible_images[current_idx];
 	center_el.setAttribute("src", new_src);
@@ -204,7 +202,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    var j = i + 1;
 	    
-	    var prev_idx = (new_idx == 0) ? count_images - 1 : new_idx - j;
+	    var prev_idx = (new_idx == 0) ? count_pictures - 1 : new_idx - j;
 	    var prev_src = this._images[prev_idx];
 	    
 	    var prev_el = visible_images[i];
@@ -214,7 +212,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	
 	for (var i= (current_idx + 1); i < count_visible; i++){
 	    
-	    var next_idx = (new_idx == (count_images - 1)) ? 0 : new_idx + 1;
+	    var next_idx = (new_idx == (count_pictures - 1)) ? 0 : new_idx + 1;
 	    var next_src = this._images[next_idx];
 	    
 	    var next_el = visible_images[i];
@@ -244,31 +242,24 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
     update(current_attrs, updated_attrs){
 	
-	console.log("CURRENT", current_attrs);
-	console.log("UPDATED", updated_attrs);
-	
 	location.hash = updated_attrs["image-id"];
-	
-	console.log("CAROUSEL", "zoomable-image-" + current_attrs["image-id"]);
+
+	var idx = this.index_for_id(updated_attrs["image-id"]);
+	console.log(idx, this._pictures[idx].children);
+
+	console.log("WUT", current_attrs["image-id"]);
 	
 	var updated_zoomable = zoomable.builder.make_zoomable_element(updated_attrs);
 	var current_zoomable = document.getElementById("zoomable-image-" + current_attrs["image-id"]);
-	
-	console.log("CURRENT", current_zoomable);
-	console.log("UPDATED", updated_zoomable);
-	
+		
 	current_zoomable.parentNode.replaceChild(updated_zoomable, current_zoomable);
 	zoomable.images.init(updated_zoomable);
 	
 	var updated_id = updated_zoomable.getAttribute("zoomable-image-id");
 	var img_id = "zoomable-picture-default-" + updated_id;
 
-	console.log("UPDATE IMAGE", img_id);
-	
 	var im = document.getElementById(img_id);
-	console.log("IM", im);
 
-	/*
 	im.onload = function() {
 	    
 	    var w = this.width;
@@ -278,14 +269,11 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 		zoomable.images.resize_visible();
 	    }
 	};
-	*/
     }
 
     advance(){
 
 	var count_images = this._images.length;
-
-	console.log("ADVANCE", count_images);
 	
 	var visible = document.getElementsByClassName("zoomable-carousel-visible");
 	var count = visible.length;
