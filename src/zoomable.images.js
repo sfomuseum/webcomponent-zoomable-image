@@ -208,7 +208,7 @@ zoomable.images = (function(){
 	    var id = el.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
-		console.log("Missing ID")
+		console.log("Element is missing zoomable-image-id attribute")
 		return false;
 	    }
 	    
@@ -241,7 +241,7 @@ zoomable.images = (function(){
 	    var id = el.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
-		console.log("Missing ID")
+		console.log("Element is missing zoomable-image-id attribute")
 		return false;
 	    }
 
@@ -410,11 +410,15 @@ zoomable.images = (function(){
 	},
 	
 	'init': function(el){
+
+	    if (! el){
+		return;
+	    }
 	    
 	    var id = el.getAttribute("zoomable-image-id");
 
 	    if (! id){
-		console.log("NO IMAGE ID");
+		console.log("Image is missing zoomable-image-id attribute");
 		return;
 	    }
 	    

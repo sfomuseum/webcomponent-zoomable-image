@@ -95,17 +95,14 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    img_node.setAttribute("zoomable-carousel-index", j);		
 	    img_node.setAttribute("src", img_src);
 	    
-	    if (link){
-		
-		img_node.onclick = function(e){
-		    var el = e.target;
-		    var src = el.getAttribute("src");
-		    var attrs = this._attrs[src];
-		    var id = attrs["image-id"];
-		    this.assign(id);
-		    return false;
-		};
-	    }
+	    img_node.onclick = function(e){
+		var el = e.target;
+		var src = el.getAttribute("src");
+		var attrs = _self._attrs[src];
+		var id = attrs["image-id"];
+		_self.assign(id);
+		return false;
+	    };
 	    
 	    var item_node = document.createElement("li");
 	    item_node.setAttribute("class", "zoomable-carousel-item");
@@ -125,15 +122,6 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	};
 	
 	carousel.appendChild(advance_el);
-
-	/*
-	if (location.hash != ""){
-	    var hash = location.hash.substr(1);
-	    var id = hash;
-	    console.log("ID", id);
-	    this.assign(id);
-	}
-	*/
 	
 	var first_pic = this._pictures[0];
 	
@@ -184,6 +172,16 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    this.init_keyboard();
 	}
+
+	if (location.hash != ""){
+	    var hash = location.hash.substr(1);
+	    var id = parseInt(hash);
+
+	    if (id){
+		this.assign(id);
+	    }
+	}
+	
     }
 
     assign(id) {
@@ -194,7 +192,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	var current_idx = Math.floor(count_visible / 2);
 	
 	var new_idx = this.index_for_id(id);
-	
+
 	if (new_idx == -1){
 	    console.log("Can't determine new index");
 	    return false;
@@ -206,13 +204,13 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    console.log("Can't get element for index " + current_idx);
 	    return false;
 	}
-	
+
 	var current_src = current_el.getAttribute("src");
 	var current_attrs = this._attrs[current_src];
 	
 	var new_src = this._images[new_idx];
 	var new_attrs = this._attrs[new_src];
-	
+
 	this.update(current_attrs, new_attrs);
 
 	// now update the bookends
@@ -273,6 +271,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	var current_zoomable = document.getElementById("zoomable-image-" + current_attrs["image-id"]);
 		
 	current_zoomable.parentNode.replaceChild(updated_zoomable, current_zoomable);
+
 	zoomable.images.init(updated_zoomable);
 	
 	var updated_id = updated_zoomable.getAttribute("zoomable-image-id");
