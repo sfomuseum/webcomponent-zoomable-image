@@ -5,6 +5,7 @@
 	width: 95vw;
 }
 
-picture {
-	
+.zoomable-carousel {
+	margin-top: 50px !important;
+	border: solid thin;
 }

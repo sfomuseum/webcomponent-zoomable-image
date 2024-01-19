@@ -22,16 +22,11 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	this._attrs = {};
 
 	var _self = this;
+
+	// Start by creating a new <ul> element that will eventually replace 'this'.
 	
-	this.setAttribute("class", "zoomable-carousel");
-
-	var items = this.querySelectorAll("li");
-	var count_items = items.length;
-
-	for (var i=0; i < count_items; i++){
-	    items[i].setAttribute("class", "zoomable-carousel-item");
-	    items[i].setAttribute("zoomable-carousel-index", i);
-	}
+	var carousel = document.createElement("ul");
+	carousel.setAttribute("class", "zoomable-carousel");
 	
 	var images = this.querySelectorAll("img");
 	var count_images = images.length;
@@ -90,7 +85,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    _self.rewind();
 	};
 	
-	this.appendChild(rewind_el);
+	carousel.appendChild(rewind_el);
 	
 	var panes = this.visible;
 	
@@ -125,9 +120,10 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    var item_node = document.createElement("li");
 	    item_node.setAttribute("class", "zoomable-carousel-item");
+	    item_node.setAttribute("zoomable-carousel-index", i);	    
 	    item_node.appendChild(img_node);
 	    
-	    this.appendChild(item_node);
+	    carousel.appendChild(item_node);
 	}
 	
 	var advance_el = document.createElement("li");
@@ -139,7 +135,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    _self.advance();
 	};
 	
-	this.appendChild(advance_el);
+	carousel.appendChild(advance_el);
 
 	var first_im = images[0];
 
@@ -157,9 +153,14 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	picture_im.setAttribute("src", first_im.getAttribute("src"));	
 
 	z.appendChild(picture_im);
-	this.parentNode.prepend(z);	
 	
-	this.style.display = "grid";
+	// this.parentNode.prepend(z);
+
+	var wrapper = document.createElement("div");
+	wrapper.appendChild(z);
+	wrapper.appendChild(carousel);
+
+	this.parentNode.replaceChild(wrapper, this);	
     }
 
     assign(id) {
