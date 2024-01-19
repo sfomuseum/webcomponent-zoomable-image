@@ -141,20 +141,23 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	
 	this.appendChild(advance_el);
 
-	/*
 	var first_im = images[0];
-	
-	var picture_el = document.createElement("picture");
-	picture_el.setAttribute("is", "zoomable-image");
-	picture_el.setAttribute("zoomable-image-id", first_im.getAttribute("zoomable-image-id"));
-	picture_el.setAttribute("zoomable-tiles-url", first_im.getAttribute("zoomable-tiles-url"));
 
+	/*
+	   Note the way we are calling new ZoomableImageElement and not document.createElement("picture")
+	   and then assigning an is="zoomable-image" property. When we do the latter the Web Component
+	   constructor is not trigger. I don't know why.
+	 */
+	
+	var z = new ZoomableImageElement();
+	z.setAttribute("zoomable-image-id", first_im.getAttribute("zoomable-image-id"));
+	z.setAttribute("zoomable-tiles-url", first_im.getAttribute("zoomable-tiles-url"));
+	
 	var picture_im = document.createElement("img");
 	picture_im.setAttribute("src", first_im.getAttribute("src"));	
-	picture_el.appendChild(picture_im);
 
-	this.parentNode.prepend(picture_el);
-	*/
+	z.appendChild(picture_im);
+	this.parentNode.prepend(z);	
 	
 	this.style.display = "grid";
     }
