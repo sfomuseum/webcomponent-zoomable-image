@@ -50,9 +50,10 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 		image_src: img_src,
 		"image-id": pic_el.getAttribute("zoomable-image-id"),
 		"tiles-url": pic_el.getAttribute("zoomable-tiles-url"),
+		"image-control": pic_el.hastAttribute("zoomable-image-control"),		
 		"picture": pic_el,
 	    };
-	    
+
 	    this._attrs[img_src] = data_attributes;
 	    
 	    var parent = img_el.parentNode;
@@ -137,6 +138,10 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
 	z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
 
+	if (first_pic.hasAttribute("zoomable-image-control")){
+	    z.setAttribute("zoomable-image-control", "true");
+	}
+	
 	for (const c of first_pic.children){
 	    z.appendChild(c);
 	}
@@ -434,6 +439,10 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	p.setAttribute("class", "zoomable-picture");
 	p.setAttribute("id", "zoomable-picture-" + args["image-id"]);
 	p.setAttribute("id", "zoomable-tiles-url-" + args["tiles-url"]);	    
+
+	if (args["image-control"]){
+	    p.setAttribute("zoomable-image-control", true);	    
+	}
 	
 	if (args["picture"]){
 	    var source_els = args["picture"].querySelectorAll("source");

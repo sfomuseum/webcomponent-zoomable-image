@@ -153,10 +153,6 @@ The source for `zoomable-image-carousel` Web Component is divided in to two file
 * [src/zoomable-image.js](src/zoomable-image.js) defines the code for registering the Web Component and decorating a `picture` element with additional HTML.
 * [src/zoomable.images.js](src/zoomable.images.js) defines the code for triggering fullscreen mode and rendering the IIIF (Level 0) image tiles.
 
-## ul@is="zoomable-image-carousel"
-
-Extend `ul` elements to behave like a `zoomable-image-carousel` component. This will decorate the `ul` element (and all its children) with markup to display the first element as a `zoomable-image` element (see above) and its immediate neighbours in a carousel-style grid, with next and previous arrows below. Pressing the arrows will advance or rewind the carousel updating the main `zoomable-image` element.
-
 ## See also
 
 * https://leafletjs.com/
