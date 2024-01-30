@@ -1,20 +1,19 @@
-class ZoomableImageElement extends HTMLPictureElement {
+class ZoomableImage {
 
     constructor() {
-	super();
     }
-    
-    connectedCallback(){
 
+    make_zoomable_wrapper(ctx) {
+	
 	var tpl_id = "zoomable-image-template";
 	
-	var id = this.getAttribute("zoomable-image-id");
-	var tiles_url = this.getAttribute("zoomable-tiles-url");
+	var id = ctx.getAttribute("zoomable-image-id");
+	var tiles_url = ctx.getAttribute("zoomable-tiles-url");
 
-	var src_els = Array.from(this.querySelectorAll("source"));
+	var src_els = Array.from(ctx.querySelectorAll("source"));
 	var count_src = src_els.length;
 	
-	var img_el = this.querySelector("img");
+	var img_el = ctx.querySelector("img");
 
 	var wrapper = document.createElement("div");
 	wrapper.setAttribute("class", "zoomable-image");
@@ -25,7 +24,7 @@ class ZoomableImageElement extends HTMLPictureElement {
 	static_el.setAttribute("class", "zoomable-static");
 	static_el.setAttribute("id", "zoomable-static-" + id);
 
-	if (this.hasAttribute("zoomable-image-control")){
+	if (ctx.hasAttribute("zoomable-image-control")){
 	    static_el.setAttribute("zoomable-image-control", "true");
 	}
 	
@@ -33,14 +32,14 @@ class ZoomableImageElement extends HTMLPictureElement {
 	button.setAttribute("class", "btn btn-sm zoomable-button zoomable-toggle-tiles");
 	button.setAttribute("id", "zoomable-toggle-tiles-" + id);
 	button.setAttribute("zoomable-image-id", id);
-	button.setAttribute("title", "View this image in full screen mode");
+	button.setAttribute("title", "View ctx image in full screen mode");
 
 	var loading = document.createElement("p");
 	loading.setAttribute("id", "zoomable-loading-" + id);
 	loading.setAttribute("class", "zoomable-loading");
 
-	if (this.hasAttribute("zoomable-loading-image")){
-	    var src = this.getAttribute("zoomable-loading-image");
+	if (ctx.hasAttribute("zoomable-loading-image")){
+	    var src = ctx.getAttribute("zoomable-loading-image");
 	    loading.setAttribute("style", "background-image:url(" + src + ")");
 	}
 	
@@ -82,8 +81,8 @@ class ZoomableImageElement extends HTMLPictureElement {
 
 	tiles.appendChild(tiles_map);
 	
-	if (this.hasAttribute("template-id")){
-	    tpl_id = this.getAttribute("template-id");
+	if (ctx.hasAttribute("template-id")){
+	    tpl_id = ctx.getAttribute("template-id");
 	}
 	
 	var tpl = document.getElementById(tpl_id);
@@ -97,8 +96,55 @@ class ZoomableImageElement extends HTMLPictureElement {
 	wrapper.appendChild(static_el);	
 	wrapper.appendChild(tiles);
 
+	return wrapper;
+    }
+}
+
+class ZoomableImageElement extends HTMLPictureElement {
+
+    constructor() {
+	super();
+    }
+    
+    connectedCallback(){
+	var zi = new ZoomableImage();
+	var wrapper = zi.make_zoomable_wrapper(this);
 	this.parentNode.replaceChild(wrapper, this);
     }
 }
 
 customElements.define('zoomable-image', ZoomableImageElement, { extends: "picture" });
+
+class MyCustomElement extends HTMLElement {
+    
+    constructor() {
+	super();
+    }
+    
+    connectedCallback() {
+
+	var zi = new ZoomableImage();
+	var wrapper = zi.make_zoomable_wrapper(this);
+
+	console.log("WR", wrapper);
+	const shadow = this.attachShadow({ mode: "open" });	
+	shadow.appendChild(wrapper);
+	
+
+  }
+
+  disconnectedCallback() {
+    console.log("Custom element removed from page.");
+  }
+
+  adoptedCallback() {
+    console.log("Custom element moved to new page.");
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    console.log(`Attribute ${name} has changed.`);
+  }
+}
+
+customElements.define("my-custom-element", MyCustomElement);
+

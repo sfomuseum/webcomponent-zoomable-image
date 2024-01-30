@@ -1,3 +1,5 @@
+console.log("WTF");
+
 class ZoomableImageCarouselElement extends HTMLUListElement {
 
     visible = 3
@@ -8,6 +10,8 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
     
     connectedCallback(){
 
+	console.log("CAROURSEL");
+	
 	if (this.hasAttribute("visible")){
 	    var n = parseInt(this.getAttribute("visible"));
 
