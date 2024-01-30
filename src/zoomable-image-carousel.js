@@ -135,34 +135,45 @@ class ZoomableImageCarousel {
 	
 	if ('webkitRequestAnimationFrame' in window){
 
-	    z = new ZoomableImageElementCustom();
+	    var z_attrs = {
+		'image-id': first_pic.getAttribute("zoomable-image-id"),
+		'image-url-ds': '',
+		'tiles-url': first_pic.getAttribute("zoomable-tiles-url"),
+		'picture': first_pic,
+	    };
 	    
-	    z.setAttribute("id", "zoomable-image-" + first_pic.getAttribute("zoomable-image-id"));
-	    z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
-	    z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
-	    
-	    if (first_pic.hasAttribute("zoomable-image-control")){
-		z.setAttribute("zoomable-image-control", "true");
-	    }
+	    z = this.make_zoomable_element(z_attrs);
 
-	    var pic = document.createElement("picture");
-
-	    var source_els = first_pic.querySelectorAll("source")
-	    var img_els = first_pic.querySelectorAll("img")
+	    /*
+	       z = new ZoomableImageElementCustom();
+	       
+	       z.setAttribute("id", "zoomable-image-" + first_pic.getAttribute("zoomable-image-id"));
+	       z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
+	       z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
+	       
+	       if (first_pic.hasAttribute("zoomable-image-control")){
+	       z.setAttribute("zoomable-image-control", "true");
+	       }
+	       
+	       var pic = document.createElement("picture");
+	       
+	       var source_els = first_pic.querySelectorAll("source")
+	       var img_els = first_pic.querySelectorAll("img")
+	       
+	       var count_sources = source_els.length;
+	       var count_imgs = img_els.length;
+	       
+	       for (var i=0; i < count_sources; i++){
+	       pic.appendChild(source_els[i]);
+	       }
+	       
+	       for (var i=0; i < count_imgs; i++){
+	       pic.appendChild(img_els[i]);
+	       }
+	       
+	       z.appendChild(pic);
+	     */
 	    
-	    var count_sources = source_els.length;
-	    var count_imgs = img_els.length;
-	    
-	    for (var i=0; i < count_sources; i++){
-		pic.appendChild(source_els[i]);
-	    }
-	    
-	    for (var i=0; i < count_imgs; i++){
-		pic.appendChild(img_els[i]);
-	    }
-
-	    z.appendChild(pic);
-
 	} else {
 	    
 	    /*
@@ -193,6 +204,8 @@ class ZoomableImageCarousel {
 	    for (var i=0; i < count_imgs; i++){
 		z.appendChild(img_els[i]);
 	    }
+
+	    console.log("ADD ZOOMABLE", first_pic.getAttribute("zoomable-image-id"));
 	}
 	
 	var wrapper = document.createElement("div");
@@ -240,20 +253,17 @@ class ZoomableImageCarousel {
 	    this.init_keyboard();
 	}
 
-	if (location.hash != ""){
-	    var hash = location.hash.substr(1);
-	    var id = parseInt(hash);
-
-	    if (id){
-		this.assign(id);
-	    }
-	}
-
 	return wrapper;
     }
     
     assign(id) {
 
+	if (! id){
+	    id = this._pictures[0].getAttribute("zoomable-image-id");
+	}
+
+	console.log("ASSIGN", id);
+	
 	var visible_images = this.document_root.querySelectorAll(".zoomable-carousel-visible");
 
 	var count_visible = visible_images.length;
@@ -268,7 +278,7 @@ class ZoomableImageCarousel {
 	}
 
 	var current_el = visible_images[current_idx];
-	
+
 	if (! current_el){
 	    console.log("Can't get element for index " + current_idx);
 	    return false;
@@ -341,7 +351,8 @@ class ZoomableImageCarousel {
 
 	current_zoomable.parentNode.replaceChild(updated_zoomable, current_zoomable);
 
-	zoomable.images.init(updated_zoomable, current_zoomable.parentNode);
+	console.log("UPDATE", updated_zoomable, this.document_root);
+	zoomable.images.init(updated_zoomable, this.document_root);
 	
 	var updated_id = updated_zoomable.getAttribute("zoomable-image-id");
 	var img_id = "#zoomable-picture-default-" + updated_id;
@@ -352,7 +363,7 @@ class ZoomableImageCarousel {
 	    
 	    var w = this.width;
 	    var h = this.height;
-	    
+
 	    if (h = w){
 		zoomable.images.resize_visible();
 	    }
@@ -558,7 +569,16 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
 	var zc = new ZoomableImageCarousel();
 	var wrapper = zc.make_carousel_wrapper(this);
-	this.parentNode.replaceChild(wrapper, this);	
+	this.parentNode.replaceChild(wrapper, this);
+
+	var id;
+	
+	if (location.hash != ""){
+	    var hash = location.hash.substr(1);
+	    id = parseInt(hash);
+	}
+
+	zc.assign(id);		
     }
 
     
@@ -581,6 +601,14 @@ class ZoomableImageCarouselCustom extends HTMLElement {
 	
 	shadow.appendChild(wrapper);
 
+	var id;
+	
+	if (location.hash != ""){
+	    var hash = location.hash.substr(1);
+	    id = parseInt(hash);
+	}
+
+	zc.assign(id);	
   }
 }
 
