@@ -23,6 +23,8 @@ class ZoomableImageCarousel {
 	var _self = this;
 
 	// Start by creating a new <ul> element that will eventually replace 'this'.
+
+	var tpl_id = "zoomable-image-carousel-template";
 	
 	var carousel = document.createElement("ul");
 	carousel.setAttribute("id", ctx.getAttribute("id"));
@@ -155,6 +157,17 @@ class ZoomableImageCarousel {
 	var wrapper = document.createElement("div");
 	wrapper.setAttribute("class", "zoomable-carousel-wrapper");
 
+	if (ctx.hasAttribute("template-id")){
+	    tpl_id = ctx.getAttribute("template-id");
+	}
+	
+	var tpl = document.getElementById(tpl_id);
+	
+	if (tpl){
+	    let tpl_content = tpl.content;
+	    wrapper.appendChild(tpl_content.cloneNode(true));
+	}
+	
 	wrapper.appendChild(z);
 	wrapper.appendChild(carousel);
 
@@ -508,3 +521,23 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 }
 
 customElements.define('zoomable-image-carousel', ZoomableImageCarouselElement, { extends: "ul" });
+
+class ZoomableImageCarouselCustom extends HTMLElement {
+    
+    constructor() {
+	super();
+    }
+    
+    connectedCallback() {
+
+	var zc = new ZoomableImageCarousel();
+	var wrapper = zc.make_carousel_wrapper(this);
+	
+	const shadow = this.attachShadow({ mode: "open" });	
+	shadow.appendChild(wrapper);
+
+  }
+}
+
+customElements.define("zoomable-image-carousel-custom", ZoomableImageCarouselCustom);
+

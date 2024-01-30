@@ -138,4 +138,3 @@ class MyCustomElement extends HTMLElement {
 }
 
 customElements.define("my-custom-element", MyCustomElement);
-
