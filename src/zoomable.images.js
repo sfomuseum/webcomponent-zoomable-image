@@ -438,6 +438,7 @@ zoomable.images = (function(){
 	    var tiles_id = "#zoomable-tiles-" +id;
 	    var tiles_el = self.document_root.querySelector(tiles_id);
 
+	    console.log("DOC ROOT", self.document_root);
 	    var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 	    
 	    var mk_tiles_func = function(id){

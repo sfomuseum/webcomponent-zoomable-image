@@ -120,7 +120,7 @@ class ZoomableImageElement extends HTMLPictureElement {
 
 customElements.define('zoomable-image', ZoomableImageElement, { extends: "picture" });
 
-class MyCustomElement extends HTMLElement {
+class ZoomableImageElementCustom extends HTMLElement {
     
     constructor() {
 	super();
@@ -130,11 +130,11 @@ class MyCustomElement extends HTMLElement {
 
 	var zi = new ZoomableImage();
 	var wrapper = zi.make_zoomable_wrapper(this);
-	
+
 	const shadow = this.attachShadow({ mode: "open" });	
 	shadow.appendChild(wrapper);
 
   }
 }
 
-customElements.define("my-custom-element", MyCustomElement);
+customElements.define("zoomable-image-custom", ZoomableImageElementCustom);
