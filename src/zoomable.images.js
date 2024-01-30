@@ -11,10 +11,6 @@ zoomable.images = (function(){
     var document_root = document;
     
     var self = {
-
-	'set_document_root': function(root) {
-	    self.document_root = root;
-	},
 	
 	'available_width': function(){
 	    
@@ -304,7 +300,12 @@ zoomable.images = (function(){
 		preferCanvas: true,
 	    };
 
-	    map = L.map(map_id, map_args);
+	    // Note that we are passing map_el rather than map_id because
+	    // Leaflet will get document.getElementById which will confuse
+	    // Safari in a custom element Web Component context.
+	    
+	    var map_el = self.document_root.querySelector(map_id);
+	    map = L.map(map_el, map_args);
 	    
 	    map.fullscreenControl.setPosition('topright');
 	    map.zoomControl.setPosition('bottomright');	   
@@ -415,11 +416,14 @@ zoomable.images = (function(){
 	    return id;
 	},
 	
-	'init': function(el){
+	'init': function(el, root){
 
 	    if (! el){
 		return;
 	    }
+
+	    // Because WebComponents and Safari...
+	    self.document_root = (root) ? root : document;
 	    
 	    var id = el.getAttribute("zoomable-image-id");
 

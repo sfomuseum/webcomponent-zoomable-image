@@ -63,14 +63,10 @@ class ZoomableImage {
 	picture_img.setAttribute("class", "card-img-top zoomable-picture-default image-square image-zoomable");
 	picture_img.onload = function(ev){
 
-	    var el = document.getElementById("zoomable-image-" + id);
-	    
-	    if (_ctx.shadowRoot){
-		el = _ctx.shadowRoot.getElementById("zoomable-image-" + id);		
-		zoomable.images.set_document_root(_ctx.shadowRoot);
-	    }
-	    
-	    zoomable.images.init(el);	    
+	    var root = (_ctx.shadowRoot) ? _ctx.shadowRoot : document;
+	    var el = root.getElementById("zoomable-image-" + id);
+	    	    
+	    zoomable.images.init(el, root);	    
 	};
 	
 	picture.appendChild(picture_img);
