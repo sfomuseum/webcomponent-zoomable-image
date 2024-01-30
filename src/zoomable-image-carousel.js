@@ -1,19 +1,18 @@
-console.log("WTF");
-
-class ZoomableImageCarouselElement extends HTMLUListElement {
+class ZoomableImageCarousel {
 
     visible = 3
     
-    constructor() {
-	super();
-    }
-    
-    connectedCallback(){
+    _images = []
+    _pictures = []
+    _links = []
+    _attrs = []
 
-	console.log("CAROURSEL");
-	
-	if (this.hasAttribute("visible")){
-	    var n = parseInt(this.getAttribute("visible"));
+    constructor() {}
+
+    make_carousel_wrapper(ctx) {
+
+	if (ctx.hasAttribute("visible")){
+	    var n = parseInt(ctx.getAttribute("visible"));
 
 	    if (n){
 		this.visible = n;
@@ -21,20 +20,15 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
 	}
 
-	this._images = [];
-	this._pictures = [];
-	this._links = {};
-	this._attrs = {};
-
 	var _self = this;
 
 	// Start by creating a new <ul> element that will eventually replace 'this'.
 	
 	var carousel = document.createElement("ul");
-	carousel.setAttribute("id", this.getAttribute("id"));
+	carousel.setAttribute("id", ctx.getAttribute("id"));
 	carousel.setAttribute("class", "zoomable-carousel");
 	
-	var pictures = this.querySelectorAll("picture");
+	var pictures = ctx.querySelectorAll("picture");
 	var count_pictures = pictures.length;
 
 	if (count_pictures < this.visible) {
@@ -164,9 +158,9 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	wrapper.appendChild(z);
 	wrapper.appendChild(carousel);
 
-	this.parentNode.replaceChild(wrapper, this);
-
-	if (this.hasAttribute("zoomable-keyboard-events")){
+	// Let's just get everything else working first...
+	
+	if (ctx.hasAttribute("zoomable-keyboard-events")){
 
 	    var pagination_el = document.createElement("div");
 	    pagination_el.setAttribute("class", "zoomable-pagination-blurb");
@@ -199,8 +193,9 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    }
 	}
 	
+	return wrapper;
     }
-
+    
     assign(id) {
 
 	var visible_images = document.getElementsByClassName("zoomable-carousel-visible");
@@ -493,6 +488,22 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
     }
     
     // END OF reconcile this with the code in zoomable-image.js    
+    
+}
+
+class ZoomableImageCarouselElement extends HTMLUListElement {
+    
+    constructor() {
+	super();
+    }
+    
+    connectedCallback(){
+
+	var zc = new ZoomableImageCarousel();
+	var wrapper = zc.make_carousel_wrapper(this);
+	this.parentNode.replaceChild(wrapper, this);	
+    }
+
     
 }
 

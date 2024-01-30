@@ -8,7 +8,10 @@ zoomable.images = (function(){
     var has_iiif;
     var iiif_quality = 'default';
 
-    var document_root = document;
+    // Local variable referencing document root which might
+    // be 'document' or a Web Component 'shadowRoot'.
+    
+    var document_root;
     
     var self = {
 	
