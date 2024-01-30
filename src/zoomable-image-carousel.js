@@ -205,7 +205,6 @@ class ZoomableImageCarousel {
 		z.appendChild(img_els[i]);
 	    }
 
-	    console.log("ADD ZOOMABLE", first_pic.getAttribute("zoomable-image-id"));
 	}
 	
 	var wrapper = document.createElement("div");
@@ -262,8 +261,6 @@ class ZoomableImageCarousel {
 	    id = this._pictures[0].getAttribute("zoomable-image-id");
 	}
 
-	console.log("ASSIGN", id);
-	
 	var visible_images = this.document_root.querySelectorAll(".zoomable-carousel-visible");
 
 	var count_visible = visible_images.length;
@@ -350,8 +347,6 @@ class ZoomableImageCarousel {
 	var current_zoomable = this.document_root.querySelector("#zoomable-image-" + current_attrs["image-id"]);
 
 	current_zoomable.parentNode.replaceChild(updated_zoomable, current_zoomable);
-
-	console.log("UPDATE", updated_zoomable, this.document_root);
 	zoomable.images.init(updated_zoomable, this.document_root);
 	
 	var updated_id = updated_zoomable.getAttribute("zoomable-image-id");

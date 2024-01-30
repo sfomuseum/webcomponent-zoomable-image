@@ -274,10 +274,6 @@ zoomable.images = (function(){
 	    var tiles_el = self.document_root.querySelector(tiles_id);
 	    var map_el = self.document_root.querySelector(map_id);	
 
-	    console.log("ROOT", document_root);
-	    console.log("TILES", tiles_id, tiles_el);
-	    console.log("MAP", map_id, map_el);	    
-	    
 	    var w = self.available_width();	
 	    var h = self.available_height();
 	    
@@ -439,8 +435,6 @@ zoomable.images = (function(){
 		return;
 	    }
 
-	    console.log("INIT ZOOMABLE", id);
-	    
 	    var tiles_id = "#zoomable-tiles-" +id;
 	    var tiles_el = self.document_root.querySelector(tiles_id);
 

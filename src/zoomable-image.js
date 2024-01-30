@@ -12,8 +12,6 @@ class ZoomableImage {
 	var id = ctx.getAttribute("zoomable-image-id");
 	var tiles_url = ctx.getAttribute("zoomable-tiles-url");
 
-	console.log("ZOOMABLE WRAPPER", id);
-	
 	var src_els = Array.from(ctx.querySelectorAll("source"));
 	var count_src = src_els.length;
 	
@@ -67,7 +65,6 @@ class ZoomableImage {
 	picture_img.onload = function(ev){
 	    var root = (_ctx.shadowRoot) ? _ctx.shadowRoot : document;
 	    var el = root.getElementById("zoomable-image-" + id);
-	    console.log("LOADED", id, root);
 	    zoomable.images.init(el, root);	    
 	};
 	
