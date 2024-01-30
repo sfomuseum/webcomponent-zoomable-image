@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="x-ua-compatible" content="ie=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>js-zoomable example</title>
+	<link rel="stylesheet" type="text/css" href="../../lib/leaflet.css" />
+	<link rel="stylesheet" type="text/css" href="../../lib/leaflet.fullscreen.css" />
+	<link rel="stylesheet" type="text/css" href="../../lib/leaflet.image.control.css" />			
+	<link rel="stylesheet" type="text/css" href="../../src/zoomable.images.css" />	
+	<link rel="stylesheet" type="text/css" href="example.css" />
+    </head>
+    <body>
+
+	<div id="grid">
+
+	    <template id="zoomable-image-template">
+		<link rel="stylesheet" type="text/css" href="../../lib/leaflet.css" />
+		<link rel="stylesheet" type="text/css" href="../../lib/leaflet.fullscreen.css" />
+		<link rel="stylesheet" type="text/css" href="../../lib/leaflet.image.control.css" />			
+		<link rel="stylesheet" type="text/css" href="../../src/zoomable.images.css" />	
+		<link rel="stylesheet" type="text/css" href="example.css" />
+	    </template>
+	    
+	    <my-custom-element zoomable-image-id="1527842879" zoomable-tiles-url="https://static.sfomuseum.org/media/152/784/287/9/tiles/">
+		<picture x-is="zoomable-image" zoomable-image-id="1796454403" zoomable-tiles-url="https://static.sfomuseum.org/media/179/645/518/1/tiles/">
+		    <source srcset="https://static.sfomuseum.org/media/179/645/518/1/1796455181_d1ZXfwMmIT5HzME6hBRXL3lygCK0yDed_c.jpg" media="(min-width: 800px)"/>
+		    <img src="https://static.sfomuseum.org/media/179/645/518/1/" />
+		</picture>
+	    </my-custom-element>
+	    
+	</div>
+	
+	<script type="text/javascript" src="../../lib/leaflet.js"></script>
+	<script type="text/javascript" src="../../lib/leaflet.fullscreen.js"></script>	
+	<script type="text/javascript" src="../../lib/leaflet-image.js"></script>
+	<script type="text/javascript" src="../../lib/leaflet.image.control.js"></script>
+	<script type="text/javascript" src="../../lib/leaflet-iiif.js"></script>
+	<script type="text/javascript" src="../../lib/FileSaver.min.js"></script>
+	<script type="text/javascript" src="../../src/zoomable.images.js"></script>	
+	<script type="text/javascript" src="../../src/zoomable-image.js"></script>
+    </body>
+</html>
