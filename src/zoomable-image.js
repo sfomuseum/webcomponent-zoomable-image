@@ -4,6 +4,8 @@ class ZoomableImage {
     }
 
     make_zoomable_wrapper(ctx) {
+
+	var _ctx = ctx;
 	
 	var tpl_id = "zoomable-image-template";
 	
@@ -59,8 +61,15 @@ class ZoomableImage {
 	    
 	picture_img.setAttribute("id", "zoomable-picture-default-" + id);
 	picture_img.setAttribute("class", "card-img-top zoomable-picture-default image-square image-zoomable");
-	picture_img.onload = function(){
+	picture_img.onload = function(ev){
+
 	    var el = document.getElementById("zoomable-image-" + id);
+	    
+	    if (_ctx.shadowRoot){
+		el = _ctx.shadowRoot.getElementById("zoomable-image-" + id);		
+		zoomable.images.set_document_root(_ctx.shadowRoot);
+	    }
+	    
 	    zoomable.images.init(el);	    
 	};
 	
@@ -125,24 +134,10 @@ class MyCustomElement extends HTMLElement {
 
 	var zi = new ZoomableImage();
 	var wrapper = zi.make_zoomable_wrapper(this);
-
-	console.log("WR", wrapper);
+	
 	const shadow = this.attachShadow({ mode: "open" });	
 	shadow.appendChild(wrapper);
-	
 
-  }
-
-  disconnectedCallback() {
-    console.log("Custom element removed from page.");
-  }
-
-  adoptedCallback() {
-    console.log("Custom element moved to new page.");
-  }
-
-  attributeChangedCallback(name, oldValue, newValue) {
-    console.log(`Attribute ${name} has changed.`);
   }
 }
 

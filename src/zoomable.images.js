@@ -8,8 +8,14 @@ zoomable.images = (function(){
     var has_iiif;
     var iiif_quality = 'default';
 
+    var document_root = document;
+    
     var self = {
 
+	'set_document_root': function(root) {
+	    self.document_root = root;
+	},
+	
 	'available_width': function(){
 	    
 	    var containers = document.getElementsByClassName("zoomable-image");
@@ -423,16 +429,17 @@ zoomable.images = (function(){
 	    }
 	    
 	    var tiles_id = "zoomable-tiles-" +id;
-	    var tiles_el = document.getElementById(tiles_id);
+	    var tiles_el = self.document_root.getElementById(tiles_id);
+
 	    var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 	    
 	    var mk_tiles_func = function(id){
 		
 		var tiles_id = "zoomable-tiles-" +id;
-		var tiles_el = document.getElementById(tiles_id);
+		var tiles_el = self.document_root.getElementById(tiles_id);
 		var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 		
-		var tiles_button = document.getElementById("zoomable-toggle-tiles-" + id);
+		var tiles_button = self.document_root.getElementById("zoomable-toggle-tiles-" + id);
 		
 		return function(){
 
