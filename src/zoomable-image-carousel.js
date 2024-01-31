@@ -37,7 +37,7 @@ class ZoomableImageCarousel {
 	var count_pictures = pictures.length;
 
 	if (count_pictures < this.visible) {
-	    this.setAttribute("class", "zoomable-carousel-" + count_pictures);
+	    ctx.setAttribute("class", "zoomable-carousel-" + count_pictures);
 	}
 
 	for (var i=0; i < count_pictures; i++){
@@ -132,7 +132,12 @@ class ZoomableImageCarousel {
 	// Create zoomable image (custom) element
 
 	var z;
-	
+
+	// If we are in a WebKit context we (seemingly) can't use the new ZoomableImageElementCustom()
+	// methods so we just use the inline code construct the element manually. All of this needs
+	// to be reconciled with the equivalent code in zoomable-image.js and, perhaps, there is no
+	// point in trying to create elements with the ZoomableImage wrapper classes. TBD...
+
 	if ('webkitRequestAnimationFrame' in window){
 
 	    var z_attrs = {
@@ -206,7 +211,7 @@ class ZoomableImageCarousel {
 	    }
 
 	}
-	
+
 	var wrapper = document.createElement("div");
 	wrapper.setAttribute("class", "zoomable-carousel-wrapper");
 
@@ -216,7 +221,7 @@ class ZoomableImageCarousel {
 	    tpl_id = ctx.getAttribute("template-id");
 	}
 	
-	var tpl = document.getElementById(tpl_id);
+	var tpl = document.querySelector("#" + tpl_id);
 
 	if (tpl){
 	    let tpl_content = tpl.content;
@@ -593,7 +598,7 @@ class ZoomableImageCarouselCustom extends HTMLElement {
 	
 	var zc = new ZoomableImageCarousel(shadow);
 	var wrapper = zc.make_carousel_wrapper(this);
-	
+
 	shadow.appendChild(wrapper);
 
 	var id;

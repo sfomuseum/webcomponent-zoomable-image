@@ -1,13 +1,15 @@
 class ZoomableImage {
 
-    constructor() {
+    document_root
+
+    constructor(root) {
+	this.document_root = (root) ? root : document;
     }
 
     make_zoomable_wrapper(ctx) {
 
 	var _ctx = ctx;
-	
-	var tpl_id = "zoomable-image-template";
+	var _self = this;
 	
 	var id = ctx.getAttribute("zoomable-image-id");
 	var tiles_url = ctx.getAttribute("zoomable-tiles-url");
@@ -63,9 +65,8 @@ class ZoomableImage {
 	picture_img.setAttribute("class", "card-img-top zoomable-picture-default image-square image-zoomable");
 	
 	picture_img.onload = function(ev){
-	    var root = (_ctx.shadowRoot) ? _ctx.shadowRoot : document;
-	    var el = root.getElementById("zoomable-image-" + id);
-	    zoomable.images.init(el, root);	    
+	    var el = _self.document_root.getElementById("zoomable-image-" + id);
+	    zoomable.images.init(el, _self.document_root);	    
 	};
 	
 	picture.appendChild(picture_img);
@@ -85,11 +86,13 @@ class ZoomableImage {
 
 	tiles.appendChild(tiles_map);
 	
+	var tpl_id = "zoomable-image-template";
+
 	if (ctx.hasAttribute("template-id")){
 	    tpl_id = ctx.getAttribute("template-id");
 	}
 	
-	var tpl = document.getElementById(tpl_id);
+	var tpl = document.querySelector("#" + tpl_id);
 	
 	if (tpl){
 	    let tpl_content = tpl.content;
@@ -127,12 +130,12 @@ class ZoomableImageElementCustom extends HTMLElement {
     
     connectedCallback() {
 
-	var zi = new ZoomableImage();
+	const shadow = this.attachShadow({ mode: "open" });	
+
+	var zi = new ZoomableImage(shadow);
 	var wrapper = zi.make_zoomable_wrapper(this);
 
-	const shadow = this.attachShadow({ mode: "open" });	
 	shadow.appendChild(wrapper);
-
   }
 }
 
