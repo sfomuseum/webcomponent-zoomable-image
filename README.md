@@ -40,7 +40,7 @@ minify --bundle \
 
 ### Extended Elements
 
-_Note: So-called "extended" elements do not work in Webkit-based browsers. In order to use the zoomable image Web Components in those browsers you will need to use "custom" elements, described below._
+_Note: So-called "extended" elements do not work in Webkit-based browsers. In order to use the zoomable image Web Components in those browsers [you will need to use "custom" elements, described below](#custom-elements)._
 
 ### picture@is="zoomable-image"
 
@@ -84,6 +84,12 @@ This is what that page would like if the `is="zoomable-image"` attribute is _pre
 And this what the page looks like when that button is pressed.
 
 ![](docs/images/zoomable-fullscreen.png)
+
+#### Examples
+
+* [www/image.html](www/image.html)
+* [www/image-unbundled.html](www/image-unbundled.html)
+* [www/image-multi.html](www/image-multi.html)
 
 #### CSS
 
@@ -144,6 +150,11 @@ This is what that page would like if the `is="zoomable-image-carousel"` attribut
 This is what that page would like if the `is="zoomable-image-carousel"` attribute is _present_ (and the `zoomable.image.webcomponent.bundle.js` script has been loaded).
 
 ![](docs/images/zoomable-carousel.png)
+
+#### Examples
+
+* [www/carousel.html](www/carousel.html)
+* [www/carousel-unbundled.html](www/carousel-unbundled.html)
 
 #### CSS
 
