@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="x-ua-compatible" content="ie=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>js-zoomable example</title>
+	<link rel="stylesheet" type="text/css" href="example.css" />
+    </head>
+    <body>
+
+	<header>
+	    <nav><a href="index.html">Examples</a></nav>
+	</header>
+	
+	<div id="grid">
+
+	    <template id="zoomable-image-template">
+		<link rel="stylesheet" type="text/css" href="../../dist/zoomable.image.webcomponent.bundle.css" />
+		<link rel="stylesheet" type="text/css" href="example.css" />	    
+	    </template>
+	    
+	    <zoomable-image-custom zoomable-image-id="1527842879" zoomable-tiles-url="https://static.sfomuseum.org/media/152/784/287/9/tiles/">
+		<picture x-is="zoomable-image" zoomable-image-id="1796454403" zoomable-tiles-url="https://static.sfomuseum.org/media/179/645/518/1/tiles/">
+		    <source srcset="https://static.sfomuseum.org/media/179/645/518/1/1796455181_d1ZXfwMmIT5HzME6hBRXL3lygCK0yDed_c.jpg" media="(min-width: 800px)"/>
+		    <img src="https://static.sfomuseum.org/media/179/645/518/1/" />
+		</picture>
+	    </zoomable-image-custom>
+	    
+	</div>
+
+	<script type="text/javascript" src="../../dist/zoomable.image.webcomponent.bundle.js"></script>	
+    </body>
+</html>
