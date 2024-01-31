@@ -170,9 +170,13 @@ The source for `zoomable-image-carousel` Web Component is divided in to two file
 
 ### Custom Elements
 
+In order for "zoomable images" to work in WebKit-based browsers it is necessary to use so-called "custom" WebComponent elements. These are non-standard and, as the name suggests, custom elements outside the default HTML/DOM elements supported by browsers.
+
 #### zoomable-image-custom
 
 Extend `picture` elements to behave like a `zoomable-image` component. This will decorate the `picture` element (and all its children) with markup to display a "fullscreen" button control that, when pressed, will display interactive IIIF Level 0 tiles in fullscreen mode.
+
+_This is the equivalent of the [is="zoomable-image"](#pictureiszoomable-image) extended element._
 
 #### Attributes
 
@@ -241,6 +245,8 @@ Note that "custom" elements depend on a locally-forked copy of the `leaflet.full
 #### zoomable-image-carousel-custom
 
 Implements `zoomable-image-carousel` component. This will create a carousel derived from a child `ul` element (and all its children) with markup to display the first element as a `zoomable-image` element (see above) and its immediate neighbours in a carousel-style grid, with next and previous arrows below. Pressing the arrows will advance or rewind the carousel updating the main `zoomable-image` element.
+
+_This is the equivalent of the [is="zoomable-image-carousel"](#uliszoomable-image-carousel) extended element._
 
 #### Attributes
 
