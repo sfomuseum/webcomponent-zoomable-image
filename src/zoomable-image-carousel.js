@@ -29,7 +29,6 @@ class ZoomableImageCarousel {
 	// Start by creating a new <ul> element that will eventually replace 'this'.
 	
 	var carousel = document.createElement("ul");
-	// carousel.setAttribute("id", ctx.getAttribute("id"));
 	
 	carousel.setAttribute("class", "zoomable-carousel");
 	
@@ -55,11 +54,16 @@ class ZoomableImageCarousel {
 		"image-id": pic_el.getAttribute("zoomable-image-id"),
 		"tiles-url": pic_el.getAttribute("zoomable-tiles-url"),
 		"image-control": pic_el.hasAttribute("zoomable-image-control"),		
-		"picture": pic_el,
+		"picture": pic_el.cloneNode(true),
+		// This is necessary because 'pic_el' get silently zero-ed out 
+		// for reasons I don't understand so we track the raw HTML and
+		// if necessary parse it back in to a DOM element in make_picture_element.
+		// Good times....
+		"picture_html": pic_el.outerHTML,
 	    };
 
 	    this._attrs[img_src] = data_attributes;
-	    
+
 	    var parent = img_el.parentNode;
 	    
 	    if (parent.nodeName == "A"){
@@ -70,7 +74,9 @@ class ZoomableImageCarousel {
 	    
 	    parent.style.display = "none";
 	}
-	
+
+	// Create rewind button
+
 	var rewind_el = document.createElement("li");
 	rewind_el.setAttribute("id", "zoomable-carousel-control-rewind");
 	rewind_el.setAttribute("class", "zoomable-carousel-item zoomable-carousel-control");
@@ -82,6 +88,8 @@ class ZoomableImageCarousel {
 	
 	carousel.appendChild(rewind_el);
 	
+	// Draw visible image panes
+
 	var panes = this.visible;
 	
 	if (count_pictures < this.visible){
@@ -115,7 +123,9 @@ class ZoomableImageCarousel {
 	    
 	    carousel.appendChild(item_node);
 	}
-	
+
+	// Create advance button
+
 	var advance_el = document.createElement("li");
 	advance_el.setAttribute("id", "zoomable-carousel-control-advance");
 	advance_el.setAttribute("class", "zoomable-carousel-item zoomable-carousel-control");
@@ -129,7 +139,7 @@ class ZoomableImageCarousel {
 	
 	var first_pic = this._pictures[0];
 
-	// Create zoomable image (custom) element
+	// Create zoomable image (custom) element which is placed above the carousel
 
 	var z;
 
@@ -291,6 +301,7 @@ class ZoomableImageCarousel {
 	
 	var new_src = this._images[new_idx];
 	var new_attrs = this._attrs[new_src];
+	new_attrs.picture = this._pictures[new_src];
 
 	this.update(current_attrs, new_attrs);
 
@@ -532,8 +543,20 @@ class ZoomableImageCarousel {
 	    p.setAttribute("zoomable-image-control", true);	    
 	}
 	
+	var picture_el;
+
+	// See notes above in make_carousel_wrapper. So dumb...
 	if (args["picture"]){
-	    var source_els = args["picture"].querySelectorAll("source");
+	    picture_el = args["picture"];
+	} else if (args["picture_html"]){
+	    var parser = new DOMParser();
+	    var doc = parser.parseFromString(args["picture_html"], "text/html");
+	    picture_el = doc.querySelector("picture");
+	}
+
+	if (picture_el){
+
+	    var source_els = picture_el.querySelectorAll("source");
 	    var count_source = source_els.length;
 	    
 	    for (var i=0; i < count_source; i++){
