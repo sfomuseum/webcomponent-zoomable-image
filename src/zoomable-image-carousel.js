@@ -1,15 +1,22 @@
-class ZoomableImageCarouselElement extends HTMLUListElement {
+class ZoomableImageCarousel {
 
     visible = 3
     
-    constructor() {
-	super();
-    }
-    
-    connectedCallback(){
+    _images = []
+    _pictures = []
+    _links = []
+    _attrs = []
 
-	if (this.hasAttribute("visible")){
-	    var n = parseInt(this.getAttribute("visible"));
+    document_root
+    
+    constructor(root) {
+	this.document_root = (root) ? root : document;
+    }
+
+    make_carousel_wrapper(ctx) {
+
+	if (ctx.hasAttribute("visible")){
+	    var n = parseInt(ctx.getAttribute("visible"));
 
 	    if (n){
 		this.visible = n;
@@ -17,24 +24,19 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
 	}
 
-	this._images = [];
-	this._pictures = [];
-	this._links = {};
-	this._attrs = {};
-
 	var _self = this;
 
 	// Start by creating a new <ul> element that will eventually replace 'this'.
 	
 	var carousel = document.createElement("ul");
-	carousel.setAttribute("id", this.getAttribute("id"));
+	
 	carousel.setAttribute("class", "zoomable-carousel");
 	
-	var pictures = this.querySelectorAll("picture");
+	var pictures = ctx.querySelectorAll("picture");
 	var count_pictures = pictures.length;
 
 	if (count_pictures < this.visible) {
-	    this.setAttribute("class", "zoomable-carousel-" + count_pictures);
+	    ctx.setAttribute("class", "zoomable-carousel-" + count_pictures);
 	}
 
 	for (var i=0; i < count_pictures; i++){
@@ -52,11 +54,16 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 		"image-id": pic_el.getAttribute("zoomable-image-id"),
 		"tiles-url": pic_el.getAttribute("zoomable-tiles-url"),
 		"image-control": pic_el.hasAttribute("zoomable-image-control"),		
-		"picture": pic_el,
+		"picture": pic_el.cloneNode(true),
+		// This is necessary because 'pic_el' get silently zero-ed out 
+		// for reasons I don't understand so we track the raw HTML and
+		// if necessary parse it back in to a DOM element in make_picture_element.
+		// Good times....
+		"picture_html": pic_el.outerHTML,
 	    };
 
 	    this._attrs[img_src] = data_attributes;
-	    
+
 	    var parent = img_el.parentNode;
 	    
 	    if (parent.nodeName == "A"){
@@ -67,7 +74,9 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    parent.style.display = "none";
 	}
-	
+
+	// Create rewind button
+
 	var rewind_el = document.createElement("li");
 	rewind_el.setAttribute("id", "zoomable-carousel-control-rewind");
 	rewind_el.setAttribute("class", "zoomable-carousel-item zoomable-carousel-control");
@@ -79,6 +88,8 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	
 	carousel.appendChild(rewind_el);
 	
+	// Draw visible image panes
+
 	var panes = this.visible;
 	
 	if (count_pictures < this.visible){
@@ -112,7 +123,9 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    
 	    carousel.appendChild(item_node);
 	}
-	
+
+	// Create advance button
+
 	var advance_el = document.createElement("li");
 	advance_el.setAttribute("id", "zoomable-carousel-control-advance");
 	advance_el.setAttribute("class", "zoomable-carousel-item zoomable-carousel-control");
@@ -125,44 +138,112 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	carousel.appendChild(advance_el);
 	
 	var first_pic = this._pictures[0];
-	
-	/*
-	   Note the way we are calling new ZoomableImageElement and not document.createElement("picture")
-	   and then assigning an is="zoomable-image" property. When we do the latter the Web Component
-	   constructor is not trigger. I don't know why.
-	 */
-	
-	var z = new ZoomableImageElement();
-	z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
-	z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
 
-	if (first_pic.hasAttribute("zoomable-image-control")){
-	    z.setAttribute("zoomable-image-control", "true");
-	}
-	
-	var source_els = first_pic.querySelectorAll("source")
-	var img_els = first_pic.querySelectorAll("img")
+	// Create zoomable image (custom) element which is placed above the carousel
 
-	var count_sources = source_els.length;
-	var count_imgs = img_els.length;
+	var z;
 
-	for (var i=0; i < count_sources; i++){
-	    z.appendChild(source_els[i]);
-	}
+	// If we are in a WebKit context we (seemingly) can't use the new ZoomableImageElementCustom()
+	// methods so we just use the inline code construct the element manually. All of this needs
+	// to be reconciled with the equivalent code in zoomable-image.js and, perhaps, there is no
+	// point in trying to create elements with the ZoomableImage wrapper classes. TBD...
 
-	for (var i=0; i < count_imgs; i++){
-	    z.appendChild(img_els[i]);
+	if ('webkitRequestAnimationFrame' in window){
+
+	    var z_attrs = {
+		'image-id': first_pic.getAttribute("zoomable-image-id"),
+		'image-url-ds': '',
+		'tiles-url': first_pic.getAttribute("zoomable-tiles-url"),
+		'picture': first_pic,
+	    };
+	    
+	    z = this.make_zoomable_element(z_attrs);
+
+	    /*
+	       z = new ZoomableImageElementCustom();
+	       
+	       z.setAttribute("id", "zoomable-image-" + first_pic.getAttribute("zoomable-image-id"));
+	       z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
+	       z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
+	       
+	       if (first_pic.hasAttribute("zoomable-image-control")){
+	       z.setAttribute("zoomable-image-control", "true");
+	       }
+	       
+	       var pic = document.createElement("picture");
+	       
+	       var source_els = first_pic.querySelectorAll("source")
+	       var img_els = first_pic.querySelectorAll("img")
+	       
+	       var count_sources = source_els.length;
+	       var count_imgs = img_els.length;
+	       
+	       for (var i=0; i < count_sources; i++){
+	       pic.appendChild(source_els[i]);
+	       }
+	       
+	       for (var i=0; i < count_imgs; i++){
+	       pic.appendChild(img_els[i]);
+	       }
+	       
+	       z.appendChild(pic);
+	     */
+	    
+	} else {
+	    
+	    /*
+	       Note the way we are calling new ZoomableImageElement and not document.createElement("picture")
+	       and then assigning an is="zoomable-image" property. When we do the latter the Web Component
+	       constructor is not trigger. I don't know why.
+	     */
+	    
+	    z = new ZoomableImageElement();
+
+	    z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
+	    z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
+	    
+	    if (first_pic.hasAttribute("zoomable-image-control")){
+		z.setAttribute("zoomable-image-control", "true");
+	    }
+	    
+	    var source_els = first_pic.querySelectorAll("source")
+	    var img_els = first_pic.querySelectorAll("img")
+	    
+	    var count_sources = source_els.length;
+	    var count_imgs = img_els.length;
+	    
+	    for (var i=0; i < count_sources; i++){
+		z.appendChild(source_els[i]);
+	    }
+	    
+	    for (var i=0; i < count_imgs; i++){
+		z.appendChild(img_els[i]);
+	    }
+
 	}
 
 	var wrapper = document.createElement("div");
 	wrapper.setAttribute("class", "zoomable-carousel-wrapper");
 
+	var tpl_id = "zoomable-image-carousel-template";
+	
+	if (ctx.hasAttribute("template-id")){
+	    tpl_id = ctx.getAttribute("template-id");
+	}
+	
+	var tpl = document.querySelector("#" + tpl_id);
+
+	if (tpl){
+	    let tpl_content = tpl.content;
+	    wrapper.appendChild(tpl_content.cloneNode(true));
+	}
+	
 	wrapper.appendChild(z);
 	wrapper.appendChild(carousel);
 
-	this.parentNode.replaceChild(wrapper, this);
-
-	if (this.hasAttribute("zoomable-keyboard-events")){
+	// Let's just get everything else working first...
+	
+	if (ctx.hasAttribute("zoomable-keyboard-events")){
 
 	    var pagination_el = document.createElement("div");
 	    pagination_el.setAttribute("class", "zoomable-pagination-blurb");
@@ -186,20 +267,17 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    this.init_keyboard();
 	}
 
-	if (location.hash != ""){
-	    var hash = location.hash.substr(1);
-	    var id = parseInt(hash);
-
-	    if (id){
-		this.assign(id);
-	    }
-	}
-	
+	return wrapper;
     }
-
+    
     assign(id) {
 
-	var visible_images = document.getElementsByClassName("zoomable-carousel-visible");
+	if (! id){
+	    id = this._pictures[0].getAttribute("zoomable-image-id");
+	}
+
+	var visible_images = this.document_root.querySelectorAll(".zoomable-carousel-visible");
+
 	var count_visible = visible_images.length;
 	
 	var current_idx = Math.floor(count_visible / 2);
@@ -210,9 +288,9 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    console.log("Can't determine new index");
 	    return false;
 	}
-	
+
 	var current_el = visible_images[current_idx];
-	
+
 	if (! current_el){
 	    console.log("Can't get element for index " + current_idx);
 	    return false;
@@ -223,6 +301,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	
 	var new_src = this._images[new_idx];
 	var new_attrs = this._attrs[new_src];
+	new_attrs.picture = this._pictures[new_src];
 
 	this.update(current_attrs, new_attrs);
 
@@ -281,22 +360,21 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	location.hash = updated_attrs["image-id"];
 
 	var updated_zoomable = this.make_zoomable_element(updated_attrs);
-	var current_zoomable = document.getElementById("zoomable-image-" + current_attrs["image-id"]);
-		
-	current_zoomable.parentNode.replaceChild(updated_zoomable, current_zoomable);
+	var current_zoomable = this.document_root.querySelector("#zoomable-image-" + current_attrs["image-id"]);
 
-	zoomable.images.init(updated_zoomable);
+	current_zoomable.parentNode.replaceChild(updated_zoomable, current_zoomable);
+	zoomable.images.init(updated_zoomable, this.document_root);
 	
 	var updated_id = updated_zoomable.getAttribute("zoomable-image-id");
-	var img_id = "zoomable-picture-default-" + updated_id;
+	var img_id = "#zoomable-picture-default-" + updated_id;
 
-	var im = document.getElementById(img_id);
+	var im = this.document_root.querySelector(img_id);
 
 	im.onload = function() {
 	    
 	    var w = this.width;
 	    var h = this.height;
-	    
+
 	    if (h = w){
 		zoomable.images.resize_visible();
 	    }
@@ -307,7 +385,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
 	var count_images = this._images.length;
 	
-	var visible = document.getElementsByClassName("zoomable-carousel-visible");
+	var visible = this.document_root.querySelectorAll(".zoomable-carousel-visible");
 	var count = visible.length;
 	
 	var center = Math.floor(count / 2);	// AGAIN, account for image count of 2
@@ -339,7 +417,7 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 
 	var count_images = this._images.length;
 	
-	var visible = document.getElementsByClassName("zoomable-carousel-visible");
+	var visible = this.document_root.querySelectorAll(".zoomable-carousel-visible");
 	var count = visible.length;
 	
 	var center = Math.floor(count / 2);
@@ -465,8 +543,20 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
 	    p.setAttribute("zoomable-image-control", true);	    
 	}
 	
+	var picture_el;
+
+	// See notes above in make_carousel_wrapper. So dumb...
 	if (args["picture"]){
-	    var source_els = args["picture"].querySelectorAll("source");
+	    picture_el = args["picture"];
+	} else if (args["picture_html"]){
+	    var parser = new DOMParser();
+	    var doc = parser.parseFromString(args["picture_html"], "text/html");
+	    picture_el = doc.querySelector("picture");
+	}
+
+	if (picture_el){
+
+	    var source_els = picture_el.querySelectorAll("source");
 	    var count_source = source_els.length;
 	    
 	    for (var i=0; i < count_source; i++){
@@ -492,4 +582,58 @@ class ZoomableImageCarouselElement extends HTMLUListElement {
     
 }
 
+class ZoomableImageCarouselElement extends HTMLUListElement {
+    
+    constructor() {
+	super();
+    }
+    
+    connectedCallback(){
+
+	var zc = new ZoomableImageCarousel();
+	var wrapper = zc.make_carousel_wrapper(this);
+	this.parentNode.replaceChild(wrapper, this);
+
+	var id;
+	
+	if (location.hash != ""){
+	    var hash = location.hash.substr(1);
+	    id = parseInt(hash);
+	}
+
+	zc.assign(id);		
+    }
+
+    
+}
+
 customElements.define('zoomable-image-carousel', ZoomableImageCarouselElement, { extends: "ul" });
+
+class ZoomableImageCarouselCustom extends HTMLElement {
+    
+    constructor() {
+	super();
+    }
+    
+    connectedCallback() {
+
+	const shadow = this.attachShadow({ mode: "open" });
+	
+	var zc = new ZoomableImageCarousel(shadow);
+	var wrapper = zc.make_carousel_wrapper(this);
+
+	shadow.appendChild(wrapper);
+
+	var id;
+	
+	if (location.hash != ""){
+	    var hash = location.hash.substr(1);
+	    id = parseInt(hash);
+	}
+
+	zc.assign(id);	
+  }
+}
+
+customElements.define("zoomable-image-carousel-custom", ZoomableImageCarouselCustom);
+

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="x-ua-compatible" content="ie=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>js-zoomable example</title>
+	<link rel="stylesheet" type="text/css" href="example.css" />
+    </head>
+    <body>
+	
+	<header>
+	    <nav><a href="index.html">Examples</a></nav>
+	</header>
+
+	<div id="grid">
+
+	    <template id="zoomable-image-template">
+		<link rel="stylesheet" type="text/css" href="../../lib/leaflet.css" />
+		<link rel="stylesheet" type="text/css" href="../../lib/leaflet.fullscreen.css" />
+		<link rel="stylesheet" type="text/css" href="../../lib/leaflet.image.control.css" />			
+		<link rel="stylesheet" type="text/css" href="../../src/zoomable.images.css" />	
+		<link rel="stylesheet" type="text/css" href="example.css" />
+	    </template>
+
+	    <zoomable-image-custom zoomable-image-id="1729566517" zoomable-tiles-url="https://static.sfomuseum.org/media/172/956/651/7/tiles/" zoomable-image-control>
+		<picture zoomable-image-id="1729566517" zoomable-tiles-url="https://static.sfomuseum.org/media/172/956/651/7/tiles/" zoomable-image-control>
+		    <img src="https://static.sfomuseum.org/media/172/956/651/7/1729566517_NCqPczZgLHRnZGn6W782an2aK1pOPg6I_c.jpg" />
+		</picture>
+	    </zoomable-image-custom>
+	    
+	</div>
+	
+	<script type="text/javascript" src="../../lib/leaflet.js"></script>
+	<script type="text/javascript" src="../../lib/leaflet-image.js"></script>
+	<script type="text/javascript" src="../../lib/leaflet.image.control.js"></script>
+	<script type="text/javascript" src="../../lib/leaflet-iiif.js"></script>
+
+	<script type="text/javascript" src="../../src/zoomable.leaflet.fullscreen.js"></script>				
+	<script type="text/javascript" src="../../lib/FileSaver.min.js"></script>
+	<script type="text/javascript" src="../../src/zoomable.images.js"></script>	
+	<script type="text/javascript" src="../../src/zoomable-image.js"></script>
+    </body>
+</html>

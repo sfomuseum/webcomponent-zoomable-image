@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+	<meta charset="utf-8" />
+	<meta http-equiv="x-ua-compatible" content="ie=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>js-zoomable example</title>
+	<link rel="stylesheet" type="text/css" href="example.css" />
+    </head>
+    <body>
+
+	<header>
+	    <nav><a href="index.html">Examples</a></nav>
+	</header>
+	
+	<template id="zoomable-image-carousel-template">
+	    <link rel="stylesheet" type="text/css" href="../../dist/zoomable.image.webcomponent.bundle.css" />
+	    <link rel="stylesheet" type="text/css" href="example.css" />	    
+	</template>
+	
+	<zoomable-image-carousel-custom zoomable-keyboard-events>
+	    <ul>
+		<li>
+		    <picture zoomable-image-id="1527842879" zoomable-tiles-url="https://static.sfomuseum.org/media/152/784/287/9/tiles/">
+			<img src="https://static.sfomuseum.org/media/152/784/287/9/1527842879_Ag9JNIHX7o2LpjurG7YBMhNyV8Gqiv8h_c.jpg" />
+		    </picture>
+		</li>
+		<li>
+		    <picture zoomable-image-id="1729566517" zoomable-tiles-url="https://static.sfomuseum.org/media/172/956/651/7/tiles/">
+			<img src="https://static.sfomuseum.org/media/172/956/651/7/1729566517_NCqPczZgLHRnZGn6W782an2aK1pOPg6I_c.jpg" />
+		    </picture>
+		</li>
+		<li>
+		    <picture zoomable-image-id="1796444669" zoomable-tiles-url="https://static.sfomuseum.org/media/179/644/466/9/tiles/">
+			<img src="https://static.sfomuseum.org/media/179/644/466/9/1796444669_PsHm5X1lQ6os1HkZgXBjBtEoafUENTRQ_n.jpg" />
+		    </picture>
+		</li>
+	    </ul>
+	</zoomable-image-carousel-custom>
+
+	<script type="text/javascript" src="../../dist/zoomable.image.webcomponent.bundle.js"></script>	
+    </body>
+</html>

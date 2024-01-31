@@ -8,11 +8,16 @@ zoomable.images = (function(){
     var has_iiif;
     var iiif_quality = 'default';
 
+    // Local variable referencing document root which might
+    // be 'document' or a Web Component 'shadowRoot'.
+    
+    var document_root;
+    
     var self = {
-
+	
 	'available_width': function(){
 	    
-	    var containers = document.getElementsByClassName("zoomable-image");
+	    var containers = self.document_root.querySelectorAll(".zoomable-image");	    
 	    var container = containers[0];
 	    
 	    return container.offsetWidth;
@@ -20,7 +25,7 @@ zoomable.images = (function(){
         
 	'available_height': function() {
 	    
-	    var navbars = document.getElementsByClassName("navbar");
+	    var navbars = self.document_root.querySelectorAll(".navbar");	    
 	    var count = navbars.length;
 	    
 	    var h = 0;
@@ -33,8 +38,8 @@ zoomable.images = (function(){
 	},
 	
 	'resize_visible': function(){
-	    
-	    var ot = document.getElementsByClassName("zoomable-image");
+
+	    var ot = self.document_root.querySelectorAll(".zoomable-image");
 	    
 	    if ((! ot) || (ot.length == 0)){
 		return;
@@ -48,15 +53,15 @@ zoomable.images = (function(){
 		return;
 	    }
 	    
-	    var picture_id = "zoomable-picture-" +id;
-	    var img_id = "zoomable-picture-default-" +id;		
-	    var tiles_id = "zoomable-tiles-" +id;
-	    var map_id = "zoomable-map-" +id;	
+	    var picture_id = "#zoomable-picture-" +id;
+	    var img_id = "#zoomable-picture-default-" +id;		
+	    var tiles_id = "#zoomable-tiles-" +id;
+	    var map_id = "#zoomable-map-" +id;	
 	    
-	    var picture_el = document.getElementById(picture_id);
-	    var img_el = document.getElementById(img_id);		
-	    var tiles_el = document.getElementById(tiles_id);
-	    var map_el = document.getElementById(map_id);	
+	    var picture_el = self.document_root.querySelector(picture_id);
+	    var img_el = self.document_root.querySelector(img_id);		
+	    var tiles_el = self.document_root.querySelector(tiles_id);
+	    var map_el = self.document_root.querySelector(map_id);	
 	    
 	    if ((! picture_el) || (! img_el) || (! tiles_el)){
 		return;
@@ -90,17 +95,17 @@ zoomable.images = (function(){
 	
 	'onload_image': function(id){
 	    
-	    var img_id = "zoomable-picture-default-" + id;
-	    var img = document.getElementById(img_id);
+	    var img_id = "#zoomable-picture-default-" + id;
+	    var img = self.document_root.querySelector(img_id);
 	    
 	    if (! img){
 		// console.log("Missing image", id);
 		return;
 	    }
 	    
-	    var static = document.getElementById("zoomable-static-" + id);
+	    var static = self.document_root.querySelector("#zoomable-static-" + id);
 	    
-	    var loading = document.getElementById("zoomable-loading-" + id);
+	    var loading = self.document_root.querySelector("#zoomable-loading-" + id);
 	
 	    if (loading){
 		loading.style.display = "none";
@@ -219,13 +224,13 @@ zoomable.images = (function(){
 	
 	'show_static_with_id': function(id){
 	    
-	    var static_id = "zoomable-static-" + id;
-	    var tiles_id = "zoomable-tiles-" +id;
+	    var static_id = "#zoomable-static-" + id;
+	    var tiles_id = "#zoomable-tiles-" +id;
 	    
-	    var static_el = document.getElementById(static_id);
-	    var tiles_el = document.getElementById(tiles_id);
+	    var static_el = self.document_root.querySelector(static_id);
+	    var tiles_el = self.document_root.querySelector(tiles_id);
 	    
-	    var tiles_button = document.getElementById("zoomable-toggle-tiles-" + id);
+	    var tiles_button = self.document_root.querySelector("#zoomable-toggle-tiles-" + id);
 	    
 	    static_el.style.display = "block";
 	    tiles_el.style.display = "none";
@@ -259,16 +264,16 @@ zoomable.images = (function(){
 		quality = iiif_quality;
 	    }
 	    
-	    var static_id = "zoomable-static-" + id;
-	    var picture_id = "zoomable-picture-" + id;		
-	    var tiles_id = "zoomable-tiles-" +id;
-	    var map_id = "zoomable-map-" +id;		
+	    var static_id = "#zoomable-static-" + id;
+	    var picture_id = "#zoomable-picture-" + id;		
+	    var tiles_id = "#zoomable-tiles-" +id;
+	    var map_id = "#zoomable-map-" +id;		
 	    
-	    var static_el = document.getElementById(static_id);
-	    var picture_el = document.getElementById(picture_id);	
-	    var tiles_el = document.getElementById(tiles_id);
-	    var map_el = document.getElementById(map_id);	
-	    
+	    var static_el = self.document_root.querySelector(static_id);
+	    var picture_el = self.document_root.querySelector(picture_id);	
+	    var tiles_el = self.document_root.querySelector(tiles_id);
+	    var map_el = self.document_root.querySelector(map_id);	
+
 	    var w = self.available_width();	
 	    var h = self.available_height();
 	    
@@ -298,9 +303,19 @@ zoomable.images = (function(){
 		preferCanvas: true,
 	    };
 
-	    map = L.map(map_id, map_args);
+	    // Note that we are passing map_el rather than map_id because
+	    // Leaflet will get document.getElementById which will confuse
+	    // Safari in a custom element Web Component context.
+	    
+	    var map_el = self.document_root.querySelector(map_id);
+	    map = L.map(map_el, map_args);
 	    
 	    map.fullscreenControl.setPosition('topright');
+
+	    if (typeof(map.fullscreenControl.setDocumentRoot) == "function"){
+		map.fullscreenControl.setDocumentRoot(self.document_root);
+	    }
+	    
 	    map.zoomControl.setPosition('bottomright');	   
 	    
 	    var quality = map_el.getAttribute("zoomable-iiif-quality");
@@ -353,7 +368,7 @@ zoomable.images = (function(){
 			var ymd = iso[0];
 			ymd = ymd.replace(/-/g, "");
 			
-			var ot = document.getElementsByClassName("zoomable-image");
+			var ot = self.document_root.querySelectorAll(".zoomable-image");
 			ot = ot[0];
 			
 			var id = ot.getAttribute("zoomable-image-id");
@@ -384,7 +399,7 @@ zoomable.images = (function(){
 		map.addControl(image_control);
 	    }
 	    
-	    var tiles_button = document.getElementById("zoomable-toggle-tiles-" + id);
+	    var tiles_button = self.document_root.querySelector("#zoomable-toggle-tiles-" + id);
 	    tiles_button.style.display = "none";
 	    
 	    return false;
@@ -392,7 +407,7 @@ zoomable.images = (function(){
 	
 	'get_id': function(){
 	    
-	    var ot = document.getElementsByClassName("zoomable-image");
+	    var ot = self.document_root.querySelectorAll(".zoomable-image");
 	    
 	    if ((! ot) || (ot.length == 0)){
 		return;
@@ -409,11 +424,14 @@ zoomable.images = (function(){
 	    return id;
 	},
 	
-	'init': function(el){
+	'init': function(el, root){
 
 	    if (! el){
 		return;
 	    }
+
+	    // Because WebComponents and Safari...
+	    self.document_root = (root) ? root : document;
 	    
 	    var id = el.getAttribute("zoomable-image-id");
 
@@ -421,18 +439,19 @@ zoomable.images = (function(){
 		console.log("Image is missing zoomable-image-id attribute");
 		return;
 	    }
-	    
-	    var tiles_id = "zoomable-tiles-" +id;
-	    var tiles_el = document.getElementById(tiles_id);
+
+	    var tiles_id = "#zoomable-tiles-" +id;
+	    var tiles_el = self.document_root.querySelector(tiles_id);
+
 	    var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 	    
 	    var mk_tiles_func = function(id){
 		
-		var tiles_id = "zoomable-tiles-" +id;
-		var tiles_el = document.getElementById(tiles_id);
+		var tiles_id = "#zoomable-tiles-" +id;
+		var tiles_el = self.document_root.querySelector(tiles_id);
 		var tiles_url = tiles_el.getAttribute("zoomable-tiles-url");
 		
-		var tiles_button = document.getElementById("zoomable-toggle-tiles-" + id);
+		var tiles_button = self.document_root.querySelector("#zoomable-toggle-tiles-" + id);
 		
 		return function(){
 
@@ -449,7 +468,7 @@ zoomable.images = (function(){
 	    self.onload_image(id);
 
 	    /*
-	    document.addEventListener('keydown', function(e){
+	    self.document_root.addEventListener('keydown', function(e){
 		
 		// z
 		
