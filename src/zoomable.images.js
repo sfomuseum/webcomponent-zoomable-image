@@ -311,6 +311,11 @@ zoomable.images = (function(){
 	    map = L.map(map_el, map_args);
 	    
 	    map.fullscreenControl.setPosition('topright');
+
+	    if (typeof(map.fullscreenControl.setDocumentRoot) == "function"){
+		map.fullscreenControl.setDocumentRoot(self.document_root);
+	    }
+	    
 	    map.zoomControl.setPosition('bottomright');	   
 	    
 	    var quality = map_el.getAttribute("zoomable-iiif-quality");

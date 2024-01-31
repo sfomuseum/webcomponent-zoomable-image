@@ -23,20 +23,21 @@
 		<link rel="stylesheet" type="text/css" href="example.css" />
 	    </template>
 	    
-	    <my-custom-element zoomable-image-id="1527842879" zoomable-tiles-url="https://static.sfomuseum.org/media/152/784/287/9/tiles/">
+	    <zoomable-image-custom zoomable-image-id="1527842879" zoomable-tiles-url="https://static.sfomuseum.org/media/152/784/287/9/tiles/">
 		<picture x-is="zoomable-image" zoomable-image-id="1796454403" zoomable-tiles-url="https://static.sfomuseum.org/media/179/645/518/1/tiles/">
 		    <source srcset="https://static.sfomuseum.org/media/179/645/518/1/1796455181_d1ZXfwMmIT5HzME6hBRXL3lygCK0yDed_c.jpg" media="(min-width: 800px)"/>
 		    <img src="https://static.sfomuseum.org/media/179/645/518/1/" />
 		</picture>
-	    </my-custom-element>
+	    </zoomable-image-custom>
 	    
 	</div>
 	
 	<script type="text/javascript" src="../../lib/leaflet.js"></script>
-	<script type="text/javascript" src="../../lib/leaflet.fullscreen.js"></script>	
 	<script type="text/javascript" src="../../lib/leaflet-image.js"></script>
 	<script type="text/javascript" src="../../lib/leaflet.image.control.js"></script>
 	<script type="text/javascript" src="../../lib/leaflet-iiif.js"></script>
+
+	<script type="text/javascript" src="../../src/zoomable.leaflet.fullscreen.js"></script>				
 	<script type="text/javascript" src="../../lib/FileSaver.min.js"></script>
 	<script type="text/javascript" src="../../src/zoomable.images.js"></script>	
 	<script type="text/javascript" src="../../src/zoomable-image.js"></script>
