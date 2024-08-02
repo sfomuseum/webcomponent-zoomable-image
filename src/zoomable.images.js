@@ -250,9 +250,6 @@ zoomable.images = (function(){
 		return false;
 	    }
 
-	    _id = id;
-
-	    // Y U NO ZOOM
 	    self.show_tiles_with_id(id);
 
 	    // https://github.com/Leaflet/Leaflet/issues/690
@@ -262,8 +259,10 @@ zoomable.images = (function(){
 	'show_tiles_with_id': function(id, zoom){
 	    
 	    if (! zoom){
-		zoom = 3;
+		zoom = 1;
 	    }
+
+	    console.log("Show tiles with ID", id, zoom);
 	    
 	    if (! quality){
 		quality = iiif_quality;
@@ -303,7 +302,7 @@ zoomable.images = (function(){
 		center: center,
 		zoom: zoom,
 		crs: L.CRS.Simple,
-		// minZoom: zoom,
+		minZoom: 1,
 		fullscreenControl: true,
 		preferCanvas: true,
 	    };
@@ -342,9 +341,9 @@ zoomable.images = (function(){
 	    tile_layer.addTo(map);
 	    
 	    map.on('fullscreenchange', function () {
-
+		
 		if (! map.isFullscreen()){
-		    self.show_static_with_id(_id);
+		    self.show_static_with_id(id);
 		    return;
 		}
 
@@ -354,8 +353,10 @@ zoomable.images = (function(){
 		map.setZoom(zoom);
 	    });
 
+	    console.log("OMG");
 	    map.toggleFullscreen();
-
+	    console.log("WTF");
+	    
 	    if ((L.Control.Image) && (static_el.hasAttribute("zoomable-image-control"))){
 
 		var _this = self;
@@ -391,8 +392,6 @@ zoomable.images = (function(){
 			var data_url = canvas.toDataURL();
 			data_url = data_url.replace("data:image/png;base64,", "");
 
-			
-			
 			canvas.toBlob(function(blob) {
 			    saveAs(blob, name);
 			});
