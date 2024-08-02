@@ -251,7 +251,12 @@ zoomable.images = (function(){
 	    }
 
 	    _id = id;
-	    return self.show_tiles_with_id(id);
+
+	    // Y U NO ZOOM
+	    self.show_tiles_with_id(id);
+
+	    // https://github.com/Leaflet/Leaflet/issues/690
+	    map.invalidateSize();
 	},
 	
 	'show_tiles_with_id': function(id, zoom){
@@ -296,9 +301,9 @@ zoomable.images = (function(){
 
 	    var map_args = {
 		center: center,
-		zoom: 1,
+		zoom: zoom,
 		crs: L.CRS.Simple,
-		minZoom: 1,
+		// minZoom: zoom,
 		fullscreenControl: true,
 		preferCanvas: true,
 	    };
@@ -466,28 +471,6 @@ zoomable.images = (function(){
 	    var tiles_func = mk_tiles_func(id);
 	    self.ensure_iiif(tiles_url, tiles_func);
 	    self.onload_image(id);
-
-	    /*
-	    self.document_root.addEventListener('keydown', function(e){
-		
-		// z
-		
-		if (e.keyCode == 90) {
-		    
-		    var id = self.get_id();
-		    
-		    if (! id){
-			return;
-		    }
-		    
-		    self.show_tiles_with_id(id);
-		    
-		    // https://github.com/Leaflet/Leaflet/issues/690
-		    map.invalidateSize();
-		}
-		
-	    });
-	    */
 	},
     };
 
