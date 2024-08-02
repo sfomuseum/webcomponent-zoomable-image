@@ -353,9 +353,7 @@ zoomable.images = (function(){
 		map.setZoom(zoom);
 	    });
 
-	    console.log("OMG");
 	    map.toggleFullscreen();
-	    console.log("WTF");
 	    
 	    if ((L.Control.Image) && (static_el.hasAttribute("zoomable-image-control"))){
 
