@@ -362,8 +362,9 @@ zoomable.images = (function(){
 		    
 		    on_success: function(map, canvas) {
 
-			var id = _this.get_id();
-			var url = _this.get_url();			
+			var id = _this.get_attribute("zoomable-image-id")
+			var tiles_url = _this.get_attribute("zoomable-tiles-url");
+			var manifest_url = _this.get_attribute("zoomable-manifest-url");						
 
 			var dt = new Date();
 			var iso = dt.toISOString();
@@ -384,24 +385,28 @@ zoomable.images = (function(){
 			const str_parts = parts.join("-");		    
 			const name = str_parts + ".jpg";
 
+			// START OF write EXIF data
+			// 'update_exif' WASM function is set up in init()
+			
 			// https://github.com/sfomuseum/go-exif-update?tab=readme-ov-file#supported-tags
 			// https://exiv2.org/tags.html
 			// https://exiftool.org/TagNames/EXIF.html
 
-			console.log("URL", url);
-			
 			var updates = {
 			    "ImageID": id,
-			    "DocumentName": url,
-			    // Copyright			    
-			    // ImageDescription
 			};
 
-			const count_updates = Object.keys(updates).length;
+			if (tiles_url){
+			    updates["DocumentName"] = tiles_url;
+			}
+
+			if (manifest_url){
+			    updates["ImageDescription"] = manifest_url;
+			}
 			
-			// 'update_exif' is set up in init()
-			
-			if ((count_updates > 0) && (update_exif) && (typeof(update_exif) == "function")){
+			// Copyright...?
+
+			if ((update_exif) && (typeof(update_exif) == "function")){
 
 			    console.debug("update EXIF", updates);
 			    
@@ -411,31 +416,45 @@ zoomable.images = (function(){
 
 			    update_exif(data_url, enc_updates).then(data => {
 
+				console.debug("EXIF data successfully updated");
+				
 				const blob = _this.dataURLToBlob(data);
 
 				if (! blob){
-				    return false;
+				    throw new Error("Failed to derive blob from (EXIF) data URL.");
 				}
 
 				saveAs(blob, name);
 				
 			    }).catch((err) => {
-				console.error("Failed to update EXIF data", err)
-			    });
-			    
-			    
-			} else {
+				
+				console.error("Failed to update EXIF data", err);
 
-			    console.error("Failed to load update_exif WASM binary, skipping EXIF updates");
-			    
-			    var data_url = canvas.toDataURL("image/jpeg", 1.0);
-			    data_url = data_url.replace("data:image/jpeg;base64,", "");
-			    
-			    canvas.toBlob(function(blob) {
-				saveAs(blob, name);
+				// Write crop without EXIF data.
+				
+				var data_url = canvas.toDataURL("image/jpeg", 1.0);
+				data_url = data_url.replace("data:image/jpeg;base64,", "");
+				
+				canvas.toBlob(function(blob) {
+				    saveAs(blob, name);
+				});
+				
 			    });
 			    
+			    return;
 			}
+
+			// END OF write EXIF data
+			
+			// Do not write EXIF data
+			
+			var data_url = canvas.toDataURL("image/jpeg", 1.0);
+			data_url = data_url.replace("data:image/jpeg;base64,", "");
+			
+			canvas.toBlob(function(blob) {
+			    saveAs(blob, name);
+			});
+			
 		    }
 		    
 		};
@@ -450,16 +469,6 @@ zoomable.images = (function(){
 	    return false;
 	},
 	
-	'get_id': function(){
-
-	    return self.get_attribute("zoomable-image-id");	    
-	},
-
-	'get_url': function(){
-	    
-	    return self.get_attribute("zoomable-tiles-url");
-	},
-
 	'get_attribute': function(attr){
 
 	    var ot = self.document_root.querySelectorAll(".zoomable-image");
@@ -552,8 +561,10 @@ zoomable.images = (function(){
 	    if ((typeof(update_exif) != "function") && (! wasm_check)){
 
 		wasm_check = true;
-		
-		sfomuseum.golang.wasm.fetch("../wasm/update_exif.wasm").then((rsp) => {
+
+		// derive from document.scripts...
+		    
+		sfomuseum.golang.wasm.fetch("wasm/update_exif.wasm").then((rsp) => {
 		    console.debug("Initialized update_exif WASM binary");
 		}).catch((err) => {
 		    console.error("Failed to load update_exif WASM binary, skipping EXIF updates");
