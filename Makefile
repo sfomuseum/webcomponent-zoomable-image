@@ -25,3 +25,8 @@ dist-css:
 		lib/leaflet.image.control.css \
 		src/zoomable.images.css \
 		src/zoomable.carousel.css
+
+# As in: https://github.com/aaronland/go-http-fileserver
+
+debug:
+	fileserver -root .

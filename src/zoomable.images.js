@@ -250,15 +250,19 @@ zoomable.images = (function(){
 		return false;
 	    }
 
-	    _id = id;
-	    return self.show_tiles_with_id(id);
+	    self.show_tiles_with_id(id);
+
+	    // https://github.com/Leaflet/Leaflet/issues/690
+	    map.invalidateSize();
 	},
 	
 	'show_tiles_with_id': function(id, zoom){
 	    
 	    if (! zoom){
-		zoom = 3;
+		zoom = 1;
 	    }
+
+	    console.log("Show tiles with ID", id, zoom);
 	    
 	    if (! quality){
 		quality = iiif_quality;
@@ -296,7 +300,7 @@ zoomable.images = (function(){
 
 	    var map_args = {
 		center: center,
-		zoom: 1,
+		zoom: zoom,
 		crs: L.CRS.Simple,
 		minZoom: 1,
 		fullscreenControl: true,
@@ -337,9 +341,9 @@ zoomable.images = (function(){
 	    tile_layer.addTo(map);
 	    
 	    map.on('fullscreenchange', function () {
-
+		
 		if (! map.isFullscreen()){
-		    self.show_static_with_id(_id);
+		    self.show_static_with_id(id);
 		    return;
 		}
 
@@ -350,7 +354,7 @@ zoomable.images = (function(){
 	    });
 
 	    map.toggleFullscreen();
-
+	    
 	    if ((L.Control.Image) && (static_el.hasAttribute("zoomable-image-control"))){
 
 		var _this = self;
@@ -386,8 +390,6 @@ zoomable.images = (function(){
 			var data_url = canvas.toDataURL();
 			data_url = data_url.replace("data:image/png;base64,", "");
 
-			
-			
 			canvas.toBlob(function(blob) {
 			    saveAs(blob, name);
 			});
@@ -466,28 +468,6 @@ zoomable.images = (function(){
 	    var tiles_func = mk_tiles_func(id);
 	    self.ensure_iiif(tiles_url, tiles_func);
 	    self.onload_image(id);
-
-	    /*
-	    self.document_root.addEventListener('keydown', function(e){
-		
-		// z
-		
-		if (e.keyCode == 90) {
-		    
-		    var id = self.get_id();
-		    
-		    if (! id){
-			return;
-		    }
-		    
-		    self.show_tiles_with_id(id);
-		    
-		    // https://github.com/Leaflet/Leaflet/issues/690
-		    map.invalidateSize();
-		}
-		
-	    });
-	    */
 	},
     };
 
