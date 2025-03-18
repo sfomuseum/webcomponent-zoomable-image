@@ -8,6 +8,8 @@ zoomable.images = (function(){
     var has_iiif;
     var iiif_quality = 'default';
 
+    var wasm_check;
+    
     // Local variable referencing document root which might
     // be 'document' or a Web Component 'shadowRoot'.
     
@@ -524,7 +526,9 @@ zoomable.images = (function(){
 	    var tiles_func = mk_tiles_func(id);
 	    self.ensure_iiif(tiles_url, tiles_func);
 
-	    if (typeof(update_exif) != "function"){
+	    if ((typeof(update_exif) != "function") && (! wasm_check)){
+
+		wasm_check = true;
 		
 		sfomuseum.golang.wasm.fetch("../wasm/update_exif.wasm").then((rsp) => {
 		    console.debug("Initialized update_exif WASM binary");
