@@ -12,6 +12,7 @@ dist-js:
 		lib/leaflet.image.control.js \
 		lib/leaflet-iiif.js \
 		lib/FileSaver.min.js \
+		lib/sfomuseum.golang.wasm.bundle.js \
 		src/zoomable.leaflet.fullscreen.js \
 		src/zoomable.images.js \
 		src/zoomable-image.js \
