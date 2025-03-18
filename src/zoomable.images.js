@@ -361,9 +361,10 @@ zoomable.images = (function(){
 		    'position': 'topright',
 		    
 		    on_success: function(map, canvas) {
-			
+
 			var id = _this.get_id();
-			
+			var url = _this.get_url();			
+
 			var dt = new Date();
 			var iso = dt.toISOString();
 			var iso = iso.split('T');
@@ -382,9 +383,18 @@ zoomable.images = (function(){
 			
 			const str_parts = parts.join("-");		    
 			const name = str_parts + ".jpg";
-	
+
+			// https://github.com/sfomuseum/go-exif-update?tab=readme-ov-file#supported-tags
+			// https://exiv2.org/tags.html
+			// https://exiftool.org/TagNames/EXIF.html
+
+			console.log("URL", url);
+			
 			var updates = {
-			    "Artist": "Alice",
+			    "ImageID": id,
+			    "DocumentName": url,
+			    // Copyright			    
+			    // ImageDescription
 			};
 
 			const count_updates = Object.keys(updates).length;
@@ -392,6 +402,8 @@ zoomable.images = (function(){
 			// 'update_exif' is set up in init()
 			
 			if ((count_updates > 0) && (update_exif) && (typeof(update_exif) == "function")){
+
+			    console.debug("update EXIF", updates);
 			    
 			    enc_updates = JSON.stringify(updates);
 			    
@@ -439,22 +451,33 @@ zoomable.images = (function(){
 	},
 	
 	'get_id': function(){
+
+	    return self.get_attribute("zoomable-image-id");	    
+	},
+
+	'get_url': function(){
 	    
+	    return self.get_attribute("zoomable-tiles-url");
+	},
+
+	'get_attribute': function(attr){
+
 	    var ot = self.document_root.querySelectorAll(".zoomable-image");
 	    
 	    if ((! ot) || (ot.length == 0)){
+		console.warn("Invalid count for .zoomable-image", ot.length);
 		return;
 	    }
 	    
 	    ot = ot[0];
 	    
-	    var id = ot.getAttribute("zoomable-image-id");
+	    var v = ot.getAttribute(attr);
 	    
-	    if (! id){
+	    if (! v){
 		return;
 	    }
 	    
-	    return id;
+	    return v;	    
 	},
 
 	dataURLToBlob: function(dataURL){
@@ -496,7 +519,7 @@ zoomable.images = (function(){
 	    var id = el.getAttribute("zoomable-image-id");
 
 	    if (! id){
-		console.log("Image is missing zoomable-image-id attribute");
+		console.error("Image is missing zoomable-image-id attribute");
 		return;
 	    }
 

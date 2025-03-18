@@ -23,6 +23,9 @@ class ZoomableImage {
 	wrapper.setAttribute("class", "zoomable-image");
 	wrapper.setAttribute("id", "zoomable-image-" + id);
 	wrapper.setAttribute("zoomable-image-id", id);
+	wrapper.setAttribute("zoomable-tiles-url", tiles_url + "info.json");	
+
+	// EXIF things...
 	
 	var static_el = document.createElement("div");
 	static_el.setAttribute("class", "zoomable-static");

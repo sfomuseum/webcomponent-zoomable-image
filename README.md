@@ -15,7 +15,7 @@ Documentation is incomplete at this time. Consult the [www](www) folder for work
 Source files for the Web Components, and related CSS, are stored in the [src](src) folder. External libraries are kept in the [lib](lib) folder. Bundled distribution files are kept in the [dist](dist) folder and generated using the `dist-all` Makefile target (which depends on [minify](https://github.com/tdewolff/minify) being installed).
 
 ```
-> make dist-all
+$> make dist-all
 minify --bundle \
 		--output dist/zoomable.image.webcomponent.bundle.js \
 		lib/leaflet.js \
