@@ -91,7 +91,9 @@ img {
 }
 
 .zoomable-picture-default {
-	// display:none;
+    width: 100%;
+    width: -moz-available;
+    width: fill-available;
 }
 
 .zoomable-static {

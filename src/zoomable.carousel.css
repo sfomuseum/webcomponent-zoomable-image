@@ -22,6 +22,8 @@
 	max-width:60px;
 	display:flex;
 	justify-content: center;
+	margin-left:2.5px;
+	margin-right:2.55px;	
 }
 
 .zoomable-carousel-control {
