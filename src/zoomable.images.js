@@ -378,21 +378,44 @@ zoomable.images = (function(){
 			    id,
 			];
 			
-			var str_parts = parts.join("-");		    
-			var name = str_parts + ".png";
+			const str_parts = parts.join("-");		    
+			const name = str_parts + ".jpg";
+	
+			var updates = {
+			    "Artist": "Alice",
+			};
 
-			// This is set up in init()
+			const count_updates = Object.keys(updates).length;
 			
-			if ((update_exif) && (typeof(update_exif) == "function")){
+			// 'update_exif' is set up in init()
+			
+			if ((count_updates > 0) && (update_exif) && (typeof(update_exif) == "function")){
+			    
+			    enc_updates = JSON.stringify(updates);
+			    
+			    var data_url = canvas.toDataURL("image/jpeg", 1.0);
 
-			    console.log("OKAY WASM");
+			    update_exif(data_url, enc_updates).then(data => {
+
+				const blob = _this.dataURLToBlob(data);
+
+				if (! blob){
+				    return false;
+				}
+
+				saveAs(blob, name);
+				
+			    }).catch((err) => {
+				console.error("Failed to update EXIF data", err)
+			    });
+			    
 			    
 			} else {
 
 			    console.error("Failed to load update_exif WASM binary, skipping EXIF updates");
 			    
-			    var data_url = canvas.toDataURL();
-			    data_url = data_url.replace("data:image/png;base64,", "");
+			    var data_url = canvas.toDataURL("image/jpeg", 1.0);
+			    data_url = data_url.replace("data:image/jpeg;base64,", "");
 			    
 			    canvas.toBlob(function(blob) {
 				saveAs(blob, name);
@@ -430,6 +453,33 @@ zoomable.images = (function(){
 	    }
 	    
 	    return id;
+	},
+
+	dataURLToBlob: function(dataURL){
+
+	    var BASE64_MARKER = ";base64,";
+	    
+	    if (dataURL.indexOf(BASE64_MARKER) == -1){
+		
+		var parts = dataURL.split(",");
+		var contentType = parts[0].split(":")[1];
+		var raw = decodeURIComponent(parts[1]);
+		
+		return new Blob([raw], {type: contentType});
+	    }
+	    
+	    var parts = dataURL.split(BASE64_MARKER);
+	    var contentType = parts[0].split(":")[1];
+	    var raw = window.atob(parts[1]);
+	    var rawLength = raw.length;
+	    
+	    var uInt8Array = new Uint8Array(rawLength);
+	    
+	    for (var i = 0; i < rawLength; ++i) {
+		uInt8Array[i] = raw.charCodeAt(i);
+	    }
+	    
+	    return new Blob([uInt8Array], {type: contentType});
 	},
 	
 	'init': function(el, root){
