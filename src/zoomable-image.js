@@ -29,6 +29,7 @@ class ZoomableImage {
 	static_el.setAttribute("id", "zoomable-static-" + id);
 
 	if (ctx.hasAttribute("zoomable-image-control")){
+	    console.debug("Context enables image control, adding to static element");
 	    static_el.setAttribute("zoomable-image-control", "true");
 	}
 	
