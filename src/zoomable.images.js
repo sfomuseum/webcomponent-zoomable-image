@@ -151,6 +151,8 @@ zoomable.images = (function(){
 	    
 	    var info_url = tiles_url + "info.json";
 
+	    // START OF replace with fetch() promise
+	    
 	    var on_success = function(e){
 		
 		var rsp = e.target;
@@ -176,15 +178,6 @@ zoomable.images = (function(){
 			    iiif_quality = "default";
 			}
 
-			/*
-			var count = profile.length;
-
-			if (count == 2){
-			    var details = profile[1];
-			    iiif_quality = details["qualities"][0];
-			}
-			*/
-
 		    } catch(err) {
 			console.log("Unable to determine (IIIF) quality", err);
 		    }
@@ -204,7 +197,8 @@ zoomable.images = (function(){
 	    req.addEventListener("load", on_success);
 	    req.open("GET", info_url);
 	    req.send();
-	    
+
+	    // END OF replace with fetch() promise	    
 	},
 	
 	'show_static': function(e){
@@ -387,14 +381,24 @@ zoomable.images = (function(){
 			var str_parts = parts.join("-");		    
 			var name = str_parts + ".png";
 
-			// ADD EXIF HERE
+			// This is set up in init()
+			
+			if ((update_exif) && (typeof(update_exif) == "function")){
 
-			var data_url = canvas.toDataURL();
-			data_url = data_url.replace("data:image/png;base64,", "");
+			    console.log("OKAY WASM");
+			    
+			} else {
 
-			canvas.toBlob(function(blob) {
-			    saveAs(blob, name);
-			});
+			    console.error("Failed to load update_exif WASM binary, skipping EXIF updates");
+			    
+			    var data_url = canvas.toDataURL();
+			    data_url = data_url.replace("data:image/png;base64,", "");
+			    
+			    canvas.toBlob(function(blob) {
+				saveAs(blob, name);
+			    });
+			    
+			}
 		    }
 		    
 		};
@@ -469,6 +473,16 @@ zoomable.images = (function(){
 	    
 	    var tiles_func = mk_tiles_func(id);
 	    self.ensure_iiif(tiles_url, tiles_func);
+
+	    if (typeof(update_exif) != "function"){
+		
+		sfomuseum.golang.wasm.fetch("../wasm/update_exif.wasm").then((rsp) => {
+		    console.debug("Initialized update_exif WASM binary");
+		}).catch((err) => {
+		    console.error("Failed to load update_exif WASM binary, skipping EXIF updates");
+		});
+	    }
+	    
 	    self.onload_image(id);
 	},
     };
