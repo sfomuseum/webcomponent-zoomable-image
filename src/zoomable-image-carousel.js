@@ -53,6 +53,7 @@ class ZoomableImageCarousel {
 		image_src: img_src,
 		"image-id": pic_el.getAttribute("zoomable-image-id"),
 		"tiles-url": pic_el.getAttribute("zoomable-tiles-url"),
+		"manifest-url": pic_el.getAttribute("zoomable-manifest-url"),		
 		"image-control": pic_el.hasAttribute("zoomable-image-control"),		
 		"picture": pic_el.cloneNode(true),
 		// This is necessary because 'pic_el' get silently zero-ed out 
@@ -154,40 +155,12 @@ class ZoomableImageCarousel {
 		'image-id': first_pic.getAttribute("zoomable-image-id"),
 		'image-url-ds': '',
 		'tiles-url': first_pic.getAttribute("zoomable-tiles-url"),
+		'manifest-url': first_pic.getAttribute("zoomable-manifest-url"),
+		'image-control': first_pic.getAttribute("zoomable-image-control"),				
 		'picture': first_pic,
 	    };
 	    
 	    z = this.make_zoomable_element(z_attrs);
-
-	    /*
-	       z = new ZoomableImageElementCustom();
-	       
-	       z.setAttribute("id", "zoomable-image-" + first_pic.getAttribute("zoomable-image-id"));
-	       z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
-	       z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
-	       
-	       if (first_pic.hasAttribute("zoomable-image-control")){
-	       z.setAttribute("zoomable-image-control", "true");
-	       }
-	       
-	       var pic = document.createElement("picture");
-	       
-	       var source_els = first_pic.querySelectorAll("source")
-	       var img_els = first_pic.querySelectorAll("img")
-	       
-	       var count_sources = source_els.length;
-	       var count_imgs = img_els.length;
-	       
-	       for (var i=0; i < count_sources; i++){
-	       pic.appendChild(source_els[i]);
-	       }
-	       
-	       for (var i=0; i < count_imgs; i++){
-	       pic.appendChild(img_els[i]);
-	       }
-	       
-	       z.appendChild(pic);
-	     */
 	    
 	} else {
 	    
@@ -201,6 +174,7 @@ class ZoomableImageCarousel {
 
 	    z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
 	    z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
+	    z.setAttribute("zoomable-manifest-url", first_pic.getAttribute("zoomable-manifest-url"));	    
 	    
 	    if (first_pic.hasAttribute("zoomable-image-control")){
 		z.setAttribute("zoomable-image-control", "true");
@@ -527,6 +501,8 @@ class ZoomableImageCarousel {
 	tiles_el.setAttribute("class", "zoomable-tiles");
 	tiles_el.setAttribute("id", "zoomable-tiles-" + args["image-id"]);
 	tiles_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
+	tiles_el.setAttribute("zoomable-manifest-url", args["manifest-url"]);
+	tiles_el.setAttribute("zoomable-image-control", args["image-control"]);		
 	
 	tiles_el.appendChild(map_el);
 	return tiles_el;
@@ -537,7 +513,8 @@ class ZoomableImageCarousel {
 	var p = document.createElement("picture");
 	p.setAttribute("class", "zoomable-picture");
 	p.setAttribute("id", "zoomable-picture-" + args["image-id"]);
-	p.setAttribute("id", "zoomable-tiles-url-" + args["tiles-url"]);	    
+	p.setAttribute("id", "zoomable-tiles-url-" + args["tiles-url"]);
+	p.setAttribute("id", "zoomable-manifest-url-" + args["manifest-url"]);	    	
 
 	if (args["image-control"]){
 	    p.setAttribute("zoomable-image-control", true);	    
