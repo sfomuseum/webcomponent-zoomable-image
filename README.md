@@ -12,10 +12,12 @@ This package does not produce IIIF Level 0 image tiles. You will need to use som
 
 Documentation is incomplete at this time. Consult the [www](www) folder for working examples.
 
-Source files for the Web Components, and related CSS, are stored in the [src](src) folder. External libraries are kept in the [lib](lib) folder. Bundled distribution files are kept in the [dist](dist) folder and generated using the `dist-all` Makefile target (which depends on [minify](https://github.com/tdewolff/minify) being installed).
+## Build
+
+Source files for the Web Components, and related CSS and WebAssembly (WASM) files, are stored in the [src](src) folder. External libraries are kept in the [lib](lib) folder. Bundled distribution files are kept in the [dist](dist) folder and generated using the `dist-all` Makefile target (which depends on [minify](https://github.com/tdewolff/minify) being installed).
 
 ```
-> make dist-all
+$> make dist-all
 minify --bundle \
 		--output dist/zoomable.image.webcomponent.bundle.js \
 		lib/leaflet.js \
@@ -23,11 +25,12 @@ minify --bundle \
 		lib/leaflet.image.control.js \
 		lib/leaflet-iiif.js \
 		lib/FileSaver.min.js \
-		src/zoomable.leaflet.fullscreen.js \		
+		lib/sfomuseum.golang.wasm.bundle.js \
+		src/zoomable.leaflet.fullscreen.js \
 		src/zoomable.images.js \
 		src/zoomable-image.js \
 		src/zoomable-image-carousel.js
-(11.289875ms, 200 kB, 173 kB,  86.7%,  18 MB/s) - (lib/leaflet.js + lib/leaflet-image.js + lib/leaflet.image.control.js + lib/leaflet.fullscreen.js + lib/leaflet-iiif.js + lib/FileSaver.min.js + src/zoomable.images.js + src/zoomable-image.js + src/zoomable-image-carousel.js) to dist/zoomable.image.webcomponent.bundle.js
+(12.055625ms, 228 kB, 194 kB,  85.2%,  19 MB/s) - (lib/leaflet.js + lib/leaflet-image.js + lib/leaflet.image.control.js + lib/leaflet-iiif.js + lib/FileSaver.min.js + lib/sfomuseum.golang.wasm.bundle.js + src/zoomable.leaflet.fullscreen.js + src/zoomable.images.js + src/zoomable-image.js + src/zoomable-image-carousel.js) to dist/zoomable.image.webcomponent.bundle.js
 minify --bundle \
 		--output dist/zoomable.image.webcomponent.bundle.css \
 		lib/leaflet.css \
@@ -35,7 +38,14 @@ minify --bundle \
 		lib/leaflet.image.control.css \
 		src/zoomable.images.css \
 		src/zoomable.carousel.css
-(960.625µs,  49 kB,  42 kB,  85.4%,  51 MB/s) - (lib/leaflet.css + lib/leaflet.fullscreen.css + lib/leaflet.image.control.css + src/zoomable.images.css + src/zoomable.carousel.css) to dist/zoomable.image.webcomponent.bundle.css
+(975.917µs,  50 kB,  42 kB,  84.9%,  51 MB/s) - (lib/leaflet.css + lib/leaflet.fullscreen.css + lib/leaflet.image.control.css + src/zoomable.images.css + src/zoomable.carousel.css) to dist/zoomable.image.webcomponent.bundle.css
+cp src/update_exif.wasm dist/update_exif.wasm
+```
+
+Note: WASM binaries and files in the `fixtures` directory (used by the example webpages in the `www` folder) are stored using [Git LFS](https://git-lfs.com/). If those files are not automatically retrieved when you clone this repository you may need to fetch (pull) them by hand, like this:
+
+```
+$> git lfs pull
 ```
 
 ### Extended Elements
@@ -319,6 +329,61 @@ Note that "custom" elements depend on a locally-forked copy of the `leaflet.full
 
 * [src/zoomable.leaflet.fullscreen.js](src/zoomable.leaflet.fullscreen.js)
 
+## Saving tiled image crops
+
+![](docs/images/webcomponent-zoomable-image-save-control.png)
+
+If a `<picture>` element has a `zoomable-image-control="true"` attribute then the [sfomuseum/leaflet-image-control](https://github.com/sfomuseum/leaflet-image-control) plugin will be enabled. This plugin allows the current state of a zoomable image to be captured as a static image. For example:
+
+```
+<picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true">
+```
+
+### EXIF data
+
+Zoomable image web components support adding EXIF data to save/cropped images through the use of the [sfomuseum/go-exif-update](https://github.com/sfomuseum/go-exif-update) WebAssembly (WASM) binary. The WASM binary (`update_exif.wasm`) is NOT included in the `zoomable.image.webcomponent.bundle.js` bundled distribution. It is bundled with the package in the [src](src) folder and copied to the [dist](dist) folder when the `dist-all` Makefile target is run.
+
+It is expected to be placed in, and retrievable from, the same folder as the `zoomable.image.webcomponent.bundle.js` (or `zoomable.images.js`) JavaScript file.
+
+The following EXIF properties are always written to saved/cropped images:
+
+* **Image.ID** This property will contain the value of the `zoomable-image-id` attribute in a `<picture>` element.
+* **Image.Document** This property will contain the value of the `zoomable-tiles-url` attribute (appended with "info.json") in a `<picture>` element.
+
+Additional optional properties may be written depending on the presence and value of the following attributes in a `<picture>` element:
+
+#### zoomable-exif-description
+
+If a `<picture>` element has a `zoomable-exif-description` attribute (and a `zoomable-image-control="true"` attribute) then the value of that attribute will be assigned to a saved image's `Image.Description` EXIF property. For example:
+
+```
+<picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true" zoomable-exif-description="https://collection.sfomuseum.org/objects/1913822539/manifest/">
+```
+
+#### zoomable-exif-copyright
+
+If a `<picture>` element has a `zoomable-exif-copyright` attribute (and a `zoomable-image-control="true"` attribute) then the value of that attribute will be assigned to a saved image's `Image.Copyright` EXIF property. For example:
+
+```
+<picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true" zoomable-exif-copyright="SFO Museum">
+```
+
+For example, the following `<picture>` element:
+
+```
+<picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true" zoomable-exif-description="https://collection.sfomuseum.org/objects/1913822539/manifest/" zoomable-exif-copyright="SFO Museum">
+```
+
+Would produce the following EXIF data in a saved image:
+
+```
+$> exiv2 -pa /usr/local/src/20250319-1796444669.jpg 
+Exif.Image.ImageDescription                  Ascii      62  https://collection.sfomuseum.org/objects/1796443753/manifest/
+Exif.Image.ImageID                           Ascii      11  1796444669
+Exif.Image.DocumentName                      Ascii      56  https://static.sfomuseum.org/media/179/644/466/9/tiles/info.json
+Exif.Image.Copyright                         Ascii      11  SFO Museum
+```
+
 ## See also
 
 * https://leafletjs.com/
@@ -327,5 +392,7 @@ Note that "custom" elements depend on a locally-forked copy of the `leaflet.full
 * https://github.com/sfomuseum/leaflet-image-control
 * https://github.com/mapbox/leaflet-image
 * https://github.com/eligrey/FileSaver.js
+* https://github.com/sfomuseum/go-exif-update
+* https://github.com/sfomuseum/js-sfomuseum-golang-wasm
 * https://developer.mozilla.org/en-US/docs/Web/API/Web_components
 * https://iiif.io/

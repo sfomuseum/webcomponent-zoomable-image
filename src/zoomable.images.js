@@ -8,6 +8,8 @@ zoomable.images = (function(){
     var has_iiif;
     var iiif_quality = 'default';
 
+    var wasm_check;
+    
     // Local variable referencing document root which might
     // be 'document' or a Web Component 'shadowRoot'.
     
@@ -151,6 +153,8 @@ zoomable.images = (function(){
 	    
 	    var info_url = tiles_url + "info.json";
 
+	    // START OF replace with fetch() promise
+	    
 	    var on_success = function(e){
 		
 		var rsp = e.target;
@@ -176,21 +180,12 @@ zoomable.images = (function(){
 			    iiif_quality = "default";
 			}
 
-			/*
-			var count = profile.length;
-
-			if (count == 2){
-			    var details = profile[1];
-			    iiif_quality = details["qualities"][0];
-			}
-			*/
-
 		    } catch(err) {
-			console.log("Unable to determine (IIIF) quality", err);
+			console.error("Unable to determine (IIIF) quality", err);
 		    }
 		    
 		} else {
-		    console.log("Failed to derive IIIF tiles, status code returned was", rsp.status)
+		    console.error("Failed to derive IIIF tiles, status code returned was", rsp.status)
 		}
 
 		// END OF custom code to account for level0 disconnect
@@ -204,7 +199,8 @@ zoomable.images = (function(){
 	    req.addEventListener("load", on_success);
 	    req.open("GET", info_url);
 	    req.send();
-	    
+
+	    // END OF replace with fetch() promise	    
 	},
 	
 	'show_static': function(e){
@@ -213,7 +209,7 @@ zoomable.images = (function(){
 	    var id = el.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
-		console.log("Element is missing zoomable-image-id attribute")
+		console.error("Element is missing zoomable-image-id attribute")
 		return false;
 	    }
 	    
@@ -246,7 +242,7 @@ zoomable.images = (function(){
 	    var id = el.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
-		console.log("Element is missing zoomable-image-id attribute")
+		console.error("Element is missing zoomable-image-id attribute")
 		return false;
 	    }
 
@@ -262,7 +258,7 @@ zoomable.images = (function(){
 		zoom = 1;
 	    }
 
-	    console.log("Show tiles with ID", id, zoom);
+	    console.debug("Show tiles with ID", id, zoom);
 	    
 	    if (! quality){
 		quality = iiif_quality;
@@ -272,7 +268,7 @@ zoomable.images = (function(){
 	    var picture_id = "#zoomable-picture-" + id;		
 	    var tiles_id = "#zoomable-tiles-" +id;
 	    var map_id = "#zoomable-map-" +id;		
-	    
+
 	    var static_el = self.document_root.querySelector(static_id);
 	    var picture_el = self.document_root.querySelector(picture_id);	
 	    var tiles_el = self.document_root.querySelector(tiles_id);
@@ -354,18 +350,23 @@ zoomable.images = (function(){
 	    });
 
 	    map.toggleFullscreen();
-	    
+
 	    if ((L.Control.Image) && (static_el.hasAttribute("zoomable-image-control"))){
 
+		console.debug("Enable L.Control.Image");
+		
 		var _this = self;
 		
 		var image_opts = {
 		    'position': 'topright',
 		    
 		    on_success: function(map, canvas) {
-			
-			var id = _this.get_id();
-			
+
+			var id = _this.get_attribute("zoomable-image-id")
+			var tiles_url = _this.get_attribute("zoomable-tiles-url");
+			var exif_description = _this.get_attribute("zoomable-exif-description");
+			var exif_copyright = _this.get_attribute("zoomable-exif-copyright");									
+
 			var dt = new Date();
 			var iso = dt.toISOString();
 			var iso = iso.split('T');
@@ -382,17 +383,81 @@ zoomable.images = (function(){
 			    id,
 			];
 			
-			var str_parts = parts.join("-");		    
-			var name = str_parts + ".png";
+			const str_parts = parts.join("-");		    
+			const name = str_parts + ".jpg";
 
-			// ADD EXIF HERE
+			// START OF write EXIF data
+			// 'update_exif' WASM function is set up in init()
+			
+			// https://github.com/sfomuseum/go-exif-update?tab=readme-ov-file#supported-tags
+			// https://exiv2.org/tags.html
+			// https://exiftool.org/TagNames/EXIF.html
 
-			var data_url = canvas.toDataURL();
-			data_url = data_url.replace("data:image/png;base64,", "");
+			var updates = {
+			    "ImageID": id,
+			};
 
+			if (tiles_url){
+			    updates["DocumentName"] = tiles_url;
+			}
+
+			if (exif_description){
+			    updates["ImageDescription"] = exif_description;
+			}
+
+			if (exif_copyright){
+			    updates["Copyright"] = exif_copyright;
+			}
+			
+			if ((update_exif) && (typeof(update_exif) == "function")){
+
+			    console.debug("update EXIF", updates);
+			    
+			    enc_updates = JSON.stringify(updates);
+			    
+			    var data_url = canvas.toDataURL("image/jpeg", 1.0);
+
+			    update_exif(data_url, enc_updates).then(data => {
+
+				console.debug("EXIF data successfully updated");
+				
+				const blob = _this.dataURLToBlob(data);
+
+				if (! blob){
+				    throw new Error("Failed to derive blob from (EXIF) data URL.");
+				}
+
+				saveAs(blob, name);
+				
+			    }).catch((err) => {
+				
+				console.error("Failed to update EXIF data", err);
+
+				// Write crop without EXIF data.
+				
+				var data_url = canvas.toDataURL("image/jpeg", 1.0);
+				data_url = data_url.replace("data:image/jpeg;base64,", "");
+				
+				canvas.toBlob(function(blob) {
+				    saveAs(blob, name);
+				});
+				
+			    });
+			    
+			    return;
+			}
+
+			// END OF write EXIF data
+			
+			// Do not write EXIF data
+			
+			var data_url = canvas.toDataURL("image/jpeg", 1.0);
+			data_url = data_url.replace("data:image/jpeg;base64,", "");
+			
 			canvas.toBlob(function(blob) {
 			    saveAs(blob, name);
 			});
+			
 		    }
 		    
 		};
@@ -407,23 +472,50 @@ zoomable.images = (function(){
 	    return false;
 	},
 	
-	'get_id': function(){
-	    
+	'get_attribute': function(attr){
+
 	    var ot = self.document_root.querySelectorAll(".zoomable-image");
-	    
+
 	    if ((! ot) || (ot.length == 0)){
+		console.warn("Invalid count for .zoomable-image", ot.length);
 		return;
 	    }
 	    
 	    ot = ot[0];
 	    
-	    var id = ot.getAttribute("zoomable-image-id");
-	    
-	    if (! id){
+	    if (! ot.hasAttribute(attr)){
+		console.warn("Missing attribute for .zoomable-image", attr);
 		return;
 	    }
 	    
-	    return id;
+	    return ot.getAttribute(attr);	    
+	},
+
+	dataURLToBlob: function(dataURL){
+
+	    var BASE64_MARKER = ";base64,";
+	    
+	    if (dataURL.indexOf(BASE64_MARKER) == -1){
+		
+		var parts = dataURL.split(",");
+		var contentType = parts[0].split(":")[1];
+		var raw = decodeURIComponent(parts[1]);
+		
+		return new Blob([raw], {type: contentType});
+	    }
+	    
+	    var parts = dataURL.split(BASE64_MARKER);
+	    var contentType = parts[0].split(":")[1];
+	    var raw = window.atob(parts[1]);
+	    var rawLength = raw.length;
+	    
+	    var uInt8Array = new Uint8Array(rawLength);
+	    
+	    for (var i = 0; i < rawLength; ++i) {
+		uInt8Array[i] = raw.charCodeAt(i);
+	    }
+	    
+	    return new Blob([uInt8Array], {type: contentType});
 	},
 	
 	'init': function(el, root){
@@ -438,7 +530,7 @@ zoomable.images = (function(){
 	    var id = el.getAttribute("zoomable-image-id");
 
 	    if (! id){
-		console.log("Image is missing zoomable-image-id attribute");
+		console.error("Image is missing zoomable-image-id attribute");
 		return;
 	    }
 
@@ -467,6 +559,40 @@ zoomable.images = (function(){
 	    
 	    var tiles_func = mk_tiles_func(id);
 	    self.ensure_iiif(tiles_url, tiles_func);
+	    
+	    if ((typeof(update_exif) != "function") && (! wasm_check)){
+
+		wasm_check = true;
+		
+		var script_el = document.querySelector('script[src*="zoomable.images.js"]')
+
+		if (! script_el){
+		    script_el = document.querySelector('script[src*="zoomable.image.webcomponent.bundle.js"]')
+		}
+		
+		if (script_el){
+
+		    var script_src = script_el.getAttribute("src");
+		    var script_parts = script_src.split("/");
+		    script_parts.pop();
+		    
+		    const wasm_root = script_parts.join("/");
+		    const wasm_uri = wasm_root + "/update_exif.wasm";
+
+		    console.debug("Fecth update EXIF WASM binary", wasm_uri);		    
+		    
+		    sfomuseum.golang.wasm.fetch(wasm_uri).then((rsp) => {
+			console.debug("Initialized update_exif WASM binary");
+		    }).catch((err) => {
+			console.error("Failed to load update_exif WASM binary, skipping EXIF updates");
+		    });
+		    
+		} else {
+		    console.error("Failed to derive script element for either 'zoomable.images.js' or 'zoomable.image.webcomponent.bundle.js'");
+		}
+		
+	    }
+	    
 	    self.onload_image(id);
 	},
     };
