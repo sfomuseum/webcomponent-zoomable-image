@@ -12,6 +12,8 @@ This package does not produce IIIF Level 0 image tiles. You will need to use som
 
 Documentation is incomplete at this time. Consult the [www](www) folder for working examples.
 
+## Build
+
 Source files for the Web Components, and related CSS and WebAssembly (WASM) files, are stored in the [src](src) folder. External libraries are kept in the [lib](lib) folder. Bundled distribution files are kept in the [dist](dist) folder and generated using the `dist-all` Makefile target (which depends on [minify](https://github.com/tdewolff/minify) being installed).
 
 ```
@@ -38,6 +40,12 @@ minify --bundle \
 		src/zoomable.carousel.css
 (975.917µs,  50 kB,  42 kB,  84.9%,  51 MB/s) - (lib/leaflet.css + lib/leaflet.fullscreen.css + lib/leaflet.image.control.css + src/zoomable.images.css + src/zoomable.carousel.css) to dist/zoomable.image.webcomponent.bundle.css
 cp src/update_exif.wasm dist/update_exif.wasm
+```
+
+Note: WASM binaries and files in the `fixtures` directory (used by the example webpages in the `www` folder) are stored using [Git LFS](https://git-lfs.com/). If those files are not automatically retrieved when you clone this repository you may need to fetch (pull) them by hand, like this:
+
+```
+$> git lfs pull
 ```
 
 ### Extended Elements
