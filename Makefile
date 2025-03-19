@@ -3,6 +3,7 @@
 dist-all:
 	@make dist-js
 	@make dist-css
+	@make dist-wasm
 
 dist-js:
 	minify --bundle \
@@ -26,6 +27,9 @@ dist-css:
 		lib/leaflet.image.control.css \
 		src/zoomable.images.css \
 		src/zoomable.carousel.css
+
+dist-wasm:
+	cp src/update_exif.wasm dist/update_exif.wasm
 
 # As in: https://github.com/aaronland/go-http-fileserver
 

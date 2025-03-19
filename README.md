@@ -12,7 +12,7 @@ This package does not produce IIIF Level 0 image tiles. You will need to use som
 
 Documentation is incomplete at this time. Consult the [www](www) folder for working examples.
 
-Source files for the Web Components, and related CSS, are stored in the [src](src) folder. External libraries are kept in the [lib](lib) folder. Bundled distribution files are kept in the [dist](dist) folder and generated using the `dist-all` Makefile target (which depends on [minify](https://github.com/tdewolff/minify) being installed).
+Source files for the Web Components, and related CSS and WebAssembly (WASM) files, are stored in the [src](src) folder. External libraries are kept in the [lib](lib) folder. Bundled distribution files are kept in the [dist](dist) folder and generated using the `dist-all` Makefile target (which depends on [minify](https://github.com/tdewolff/minify) being installed).
 
 ```
 $> make dist-all
@@ -23,11 +23,12 @@ minify --bundle \
 		lib/leaflet.image.control.js \
 		lib/leaflet-iiif.js \
 		lib/FileSaver.min.js \
-		src/zoomable.leaflet.fullscreen.js \		
+		lib/sfomuseum.golang.wasm.bundle.js \
+		src/zoomable.leaflet.fullscreen.js \
 		src/zoomable.images.js \
 		src/zoomable-image.js \
 		src/zoomable-image-carousel.js
-(11.289875ms, 200 kB, 173 kB,  86.7%,  18 MB/s) - (lib/leaflet.js + lib/leaflet-image.js + lib/leaflet.image.control.js + lib/leaflet.fullscreen.js + lib/leaflet-iiif.js + lib/FileSaver.min.js + src/zoomable.images.js + src/zoomable-image.js + src/zoomable-image-carousel.js) to dist/zoomable.image.webcomponent.bundle.js
+(12.055625ms, 228 kB, 194 kB,  85.2%,  19 MB/s) - (lib/leaflet.js + lib/leaflet-image.js + lib/leaflet.image.control.js + lib/leaflet-iiif.js + lib/FileSaver.min.js + lib/sfomuseum.golang.wasm.bundle.js + src/zoomable.leaflet.fullscreen.js + src/zoomable.images.js + src/zoomable-image.js + src/zoomable-image-carousel.js) to dist/zoomable.image.webcomponent.bundle.js
 minify --bundle \
 		--output dist/zoomable.image.webcomponent.bundle.css \
 		lib/leaflet.css \
@@ -35,7 +36,8 @@ minify --bundle \
 		lib/leaflet.image.control.css \
 		src/zoomable.images.css \
 		src/zoomable.carousel.css
-(960.625µs,  49 kB,  42 kB,  85.4%,  51 MB/s) - (lib/leaflet.css + lib/leaflet.fullscreen.css + lib/leaflet.image.control.css + src/zoomable.images.css + src/zoomable.carousel.css) to dist/zoomable.image.webcomponent.bundle.css
+(975.917µs,  50 kB,  42 kB,  84.9%,  51 MB/s) - (lib/leaflet.css + lib/leaflet.fullscreen.css + lib/leaflet.image.control.css + src/zoomable.images.css + src/zoomable.carousel.css) to dist/zoomable.image.webcomponent.bundle.css
+cp src/update_exif.wasm dist/update_exif.wasm
 ```
 
 ### Extended Elements
@@ -331,7 +333,9 @@ If a `<picture>` element has a `zoomable-image-control="true"` attribute then th
 
 ### EXIF data
 
-Zoomable image web components support adding EXIF data to save/cropped images through the use of the [sfomuseum/go-exif-update](https://github.com/sfomuseum/go-exif-update) WebAssembly (WASM) binary. The WASM binary (`update_exif.wasm`) is NOT included in the `zoomable.image.webcomponent.bundle.js` bundled distribution. It is included in [PATH] and will need to manually copied to [PATH].
+Zoomable image web components support adding EXIF data to save/cropped images through the use of the [sfomuseum/go-exif-update](https://github.com/sfomuseum/go-exif-update) WebAssembly (WASM) binary. The WASM binary (`update_exif.wasm`) is NOT included in the `zoomable.image.webcomponent.bundle.js` bundled distribution. It is bundled with the package in the [src](src) folder and copied to the [dist](dist) folder when the `dist-all` Makefile target is run.
+
+It is expected to be placed in, and retrievable from, the same folder as the `zoomable.image.webcomponent.bundle.js` (or `zoomable.images.js`) JavaScript file.
 
 The following EXIF properties are always written to saved/cropped images:
 

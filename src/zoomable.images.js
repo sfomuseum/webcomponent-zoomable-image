@@ -559,18 +559,38 @@ zoomable.images = (function(){
 	    
 	    var tiles_func = mk_tiles_func(id);
 	    self.ensure_iiif(tiles_url, tiles_func);
-
+	    
 	    if ((typeof(update_exif) != "function") && (! wasm_check)){
 
 		wasm_check = true;
+		
+		var script_el = document.querySelector('script[src*="zoomable.images.js"]')
 
-		// derive from document.scripts...
+		if (! script_el){
+		    script_el = document.querySelector('script[src*="zoomable.image.webcomponent.bundle.js"]')
+		}
+		
+		if (script_el){
+
+		    var script_src = script_el.getAttribute("src");
+		    var script_parts = script_src.split("/");
+		    script_parts.pop();
 		    
-		sfomuseum.golang.wasm.fetch("wasm/update_exif.wasm").then((rsp) => {
-		    console.debug("Initialized update_exif WASM binary");
-		}).catch((err) => {
-		    console.error("Failed to load update_exif WASM binary, skipping EXIF updates");
-		});
+		    const wasm_root = script_parts.join("/");
+		    const wasm_uri = wasm_root + "/update_exif.wasm";
+
+		    console.debug("Fecth update EXIF WASM binary", wasm_uri);		    
+		    
+		    sfomuseum.golang.wasm.fetch(wasm_uri).then((rsp) => {
+			console.debug("Initialized update_exif WASM binary");
+		    }).catch((err) => {
+			console.error("Failed to load update_exif WASM binary, skipping EXIF updates");
+		    });
+		    
+		} else {
+		    console.error("Failed to derive script element for either 'zoomable.images.js' or 'zoomable.image.webcomponent.bundle.js'");
+		}
+		
 	    }
 	    
 	    self.onload_image(id);
