@@ -319,6 +319,29 @@ Note that "custom" elements depend on a locally-forked copy of the `leaflet.full
 
 * [src/zoomable.leaflet.fullscreen.js](src/zoomable.leaflet.fullscreen.js)
 
+## Saving tiled image crops
+
+If a `<picture>` element has a `zoomable-image-control="true"` attribute then the [sfomuseum/leaflet-image-control](https://github.com/sfomuseum/leaflet-image-control) plugin will be enabled. This plugin allows the current state of a zoomable image to be captured as a static image. For example:
+
+```
+<picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true">
+```
+
+[IMAGE]
+
+### EXIF data
+
+[WORDS]
+
+For example:
+
+```
+$> exiv2 -pa /usr/local/src/20250319-1796444669.jpg 
+Exif.Image.ImageDescription                  Ascii      62  https://collection.sfomuseum.org/objects/1796443753/manifest/
+Exif.Image.ImageID                           Ascii      11  1796444669
+Exif.Image.DocumentName                      Ascii      56  https://static.sfomuseum.org/media/179/644/466/9/tiles/
+```
+
 ## See also
 
 * https://leafletjs.com/
@@ -327,5 +350,7 @@ Note that "custom" elements depend on a locally-forked copy of the `leaflet.full
 * https://github.com/sfomuseum/leaflet-image-control
 * https://github.com/mapbox/leaflet-image
 * https://github.com/eligrey/FileSaver.js
+* https://github.com/sfomuseum/go-exif-update
+* https://github.com/sfomuseum/js-sfomuseum-golang-wasm
 * https://developer.mozilla.org/en-US/docs/Web/API/Web_components
 * https://iiif.io/
