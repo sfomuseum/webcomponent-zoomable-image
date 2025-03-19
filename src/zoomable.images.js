@@ -409,8 +409,6 @@ zoomable.images = (function(){
 			    updates["Copyright"] = exif_copyright;
 			}
 			
-			// Copyright...?
-
 			if ((update_exif) && (typeof(update_exif) == "function")){
 
 			    console.debug("update EXIF", updates);

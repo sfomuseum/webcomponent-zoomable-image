@@ -333,6 +333,10 @@ If a `<picture>` element has a `zoomable-image-control="true"` attribute then th
 
 [WORDS]
 
+#### zoomable-exif-description
+
+#### zoomable-exif-copyright
+
 For example:
 
 ```
@@ -340,6 +344,7 @@ $> exiv2 -pa /usr/local/src/20250319-1796444669.jpg
 Exif.Image.ImageDescription                  Ascii      62  https://collection.sfomuseum.org/objects/1796443753/manifest/
 Exif.Image.ImageID                           Ascii      11  1796444669
 Exif.Image.DocumentName                      Ascii      56  https://static.sfomuseum.org/media/179/644/466/9/tiles/
+Exif.Image.Copyright                         Ascii      11  SFO Museum
 ```
 
 ## See also

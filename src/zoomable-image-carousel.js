@@ -1,5 +1,10 @@
 class ZoomableImageCarousel {
 
+    // This package is in need of some love, refactoring or at least documentation.
+    // Specifically looking over the code now it seems overly complicated and repetative
+    // but I am confident there were reasons. I just don't remember what those reasons
+    // were anymore...
+    
     visible = 3
     
     _images = []
@@ -53,7 +58,8 @@ class ZoomableImageCarousel {
 		image_src: img_src,
 		"image-id": pic_el.getAttribute("zoomable-image-id"),
 		"tiles-url": pic_el.getAttribute("zoomable-tiles-url"),
-		"exif-description": pic_el.getAttribute("zoomable-exif-description"),		
+		"exif-description": pic_el.getAttribute("zoomable-exif-description"),
+		"exif-copyright": pic_el.getAttribute("zoomable-exif-copyright"),		
 		"image-control": pic_el.hasAttribute("zoomable-image-control"),		
 		"picture": pic_el.cloneNode(true),
 		// This is necessary because 'pic_el' get silently zero-ed out 
@@ -162,6 +168,10 @@ class ZoomableImageCarousel {
 	    if (first_pic.hasAttribute("zoomable-exif-description")){
 		z_attrs['exif-description'] = first_pic.getAttribute("zoomable-exif-description");
 	    }
+
+	    if (first_pic.hasAttribute("zoomable-exif-copyright")){
+		z_attrs['exif-copyright'] = first_pic.getAttribute("zoomable-exif-copyright");
+	    }
 	    
 	    z = this.make_zoomable_element(z_attrs);
 	    
@@ -180,6 +190,10 @@ class ZoomableImageCarousel {
 
 	    if (first_pic.hasAttribute("zoomable-exif-description")){
 		z.setAttribute("zoomable-exif-description", first_pic.getAttribute("zoomable-exif-description"));	    
+	    }
+
+	    if (first_pic.hasAttribute("zoomable-exif-copyright")){
+		z.setAttribute("zoomable-exif-copyright", first_pic.getAttribute("zoomable-exif-copyright"));	    
 	    }
 	    
 	    if (first_pic.hasAttribute("zoomable-image-control")){
@@ -454,12 +468,16 @@ class ZoomableImageCarousel {
 
 	zoomable_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
 
+	if (args["image-control"]){
+	    zoomable_el.setAttribute("zoomable-image-control", args["image-control"]);		
+	}
+	
 	if (args["exif-description"]){
 	    zoomable_el.setAttribute("zoomable-exif-description", args["exif-description"]);
 	}
 	
-	if (args["image-control"]){
-	    zoomable_el.setAttribute("zoomable-image-control", args["image-control"]);		
+	if (args["exif-copyright"]){
+	    zoomable_el.setAttribute("zoomable-exif-copyright", args["exif-copyright"]);
 	}
 	
 	zoomable_el.appendChild(static_el);
@@ -501,14 +519,18 @@ class ZoomableImageCarousel {
 
 	static_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
 
-	if (args["exif-description"]){
-	    static_el.setAttribute("zoomable-exif-description", args["exif-description"]);
-	}
-	
 	if (args["image-control"]){
 	    static_el.setAttribute("zoomable-image-control", args["image-control"]);		
 	}
 	
+	if (args["exif-description"]){
+	    static_el.setAttribute("zoomable-exif-description", args["exif-description"]);
+	}
+
+	if (args["exif-copyright"]){
+	    static_el.setAttribute("zoomable-exif-copyright", args["exif-copyright"]);
+	}
+		
 	static_el.appendChild(button_el);
 	static_el.appendChild(loading_el);
 	static_el.appendChild(link_el);
@@ -527,12 +549,16 @@ class ZoomableImageCarousel {
 	tiles_el.setAttribute("id", "zoomable-tiles-" + args["image-id"]);
 	tiles_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
 
+	if (args["image-control"]){
+	    tiles_el.setAttribute("zoomable-image-control", args["image-control"]);		
+	}
+		
 	if (args["exif-description"]){
 	    tiles_el.setAttribute("zoomable-exif-description", args["exif-description"]);
 	}
-
-	if (args["image-control"]){
-	    tiles_el.setAttribute("zoomable-image-control", args["image-control"]);		
+	
+	if (args["exif-copyright"]){
+	    tiles_el.setAttribute("zoomable-exif-copyright", args["exif-copyright"]);
 	}
 	
 	tiles_el.appendChild(map_el);
@@ -546,14 +572,18 @@ class ZoomableImageCarousel {
 	p.setAttribute("id", "zoomable-picture-" + args["image-id"]);
 	p.setAttribute("zoomable-tiles-url", args["tiles-url"]);
 
-	if (args["exif-description"]){
-	    p.setAttribute("zoomable-exif-description", args["exif-description"]);	    	
-	}
-	
 	if (args["image-control"]){
 	    p.setAttribute("zoomable-image-control", true);	    
 	}
 	
+	if (args["exif-description"]){
+	    p.setAttribute("zoomable-exif-description", args["exif-description"]);	    	
+	}
+
+	if (args["exif-copyright"]){
+	    p.setAttribute("zoomable-exif-copyright", args["exif-copyright"]);	    	
+	}
+		
 	var picture_el;
 
 	// See notes above in make_carousel_wrapper. So dumb...
