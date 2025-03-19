@@ -364,7 +364,8 @@ zoomable.images = (function(){
 
 			var id = _this.get_attribute("zoomable-image-id")
 			var tiles_url = _this.get_attribute("zoomable-tiles-url");
-			var manifest_url = _this.get_attribute("zoomable-manifest-url");						
+			var exif_description = _this.get_attribute("zoomable-exif-description");
+			var exif_copyright = _this.get_attribute("zoomable-exif-copyright");									
 
 			var dt = new Date();
 			var iso = dt.toISOString();
@@ -400,8 +401,12 @@ zoomable.images = (function(){
 			    updates["DocumentName"] = tiles_url;
 			}
 
-			if (manifest_url){
-			    updates["ImageDescription"] = manifest_url;
+			if (exif_description){
+			    updates["ImageDescription"] = exif_description;
+			}
+
+			if (exif_copyright){
+			    updates["Copyright"] = exif_copyright;
 			}
 			
 			// Copyright...?

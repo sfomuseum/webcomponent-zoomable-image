@@ -13,7 +13,8 @@ class ZoomableImage {
 	
 	var id = ctx.getAttribute("zoomable-image-id");
 	var tiles_url = ctx.getAttribute("zoomable-tiles-url");
-	var manifest_url = ctx.getAttribute("zoomable-manifest-url");	
+	var exif_description = ctx.getAttribute("zoomable-exif-description");
+	var exif_copyright = ctx.getAttribute("zoomable-exif-copyright");		
 
 	var src_els = Array.from(ctx.querySelectorAll("source"));
 	var count_src = src_els.length;
@@ -27,8 +28,15 @@ class ZoomableImage {
 
 	// START OF EXIF things...
 	
-	wrapper.setAttribute("zoomable-tiles-url", tiles_url + "info.json");	
-	wrapper.setAttribute("zoomable-manifest-url", manifest_url);
+	wrapper.setAttribute("zoomable-tiles-url", tiles_url + "info.json");
+
+	if (exif_description){
+	    wrapper.setAttribute("zoomable-exif-description", exif_description);
+	}
+
+	if (exif_copyright){
+	    wrapper.setAttribute("zoomable-exif-copyright", exif_copyright);	
+	}
 	
 	// END OF EXIF things...
 	
