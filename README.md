@@ -321,29 +321,54 @@ Note that "custom" elements depend on a locally-forked copy of the `leaflet.full
 
 ## Saving tiled image crops
 
+![](docs/images/webcomponent-zoomable-image-save-control.png)
+
 If a `<picture>` element has a `zoomable-image-control="true"` attribute then the [sfomuseum/leaflet-image-control](https://github.com/sfomuseum/leaflet-image-control) plugin will be enabled. This plugin allows the current state of a zoomable image to be captured as a static image. For example:
 
 ```
 <picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true">
 ```
 
-[IMAGE]
-
 ### EXIF data
 
-[WORDS]
+Zoomable image web components support adding EXIF data to save/cropped images through the use of the [sfomuseum/go-exif-update](https://github.com/sfomuseum/go-exif-update) WebAssembly (WASM) binary. The WASM binary (`update_exif.wasm`) is NOT included in the `zoomable.image.webcomponent.bundle.js` bundled distribution. It is included in [PATH] and will need to manually copied to [PATH].
+
+The following EXIF properties are always written to saved/cropped images:
+
+* **Image.ID** This property will contain the value of the `zoomable-image-id` attribute in a `<picture>` element.
+* **Image.Document** This property will contain the value of the `zoomable-tiles-url` attribute (appended with "info.json") in a `<picture>` element.
+
+Additional optional properties may be written depending on the presence and value of the following attributes in a `<picture>` element:
 
 #### zoomable-exif-description
 
+If a `<picture>` element has a `zoomable-exif-description` attribute (and a `zoomable-image-control="true"` attribute) then the value of that attribute will be assigned to a saved image's `Image.Description` EXIF property. For example:
+
+```
+<picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true" zoomable-exif-description="https://collection.sfomuseum.org/objects/1913822539/manifest/">
+```
+
 #### zoomable-exif-copyright
 
-For example:
+If a `<picture>` element has a `zoomable-exif-copyright` attribute (and a `zoomable-image-control="true"` attribute) then the value of that attribute will be assigned to a saved image's `Image.Copyright` EXIF property. For example:
+
+```
+<picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true" zoomable-exif-copyright="SFO Museum">
+```
+
+For example, the following `<picture>` element:
+
+```
+<picture is="zoomable-image" zoomable-image-id="1913822923" zoomable-tiles-url="../work/media/191/382/292/3/tiles/"  zoomable-image-control="true" zoomable-exif-description="https://collection.sfomuseum.org/objects/1913822539/manifest/" zoomable-exif-copyright="SFO Museum">
+```
+
+Would produce the following EXIF data in a saved image:
 
 ```
 $> exiv2 -pa /usr/local/src/20250319-1796444669.jpg 
 Exif.Image.ImageDescription                  Ascii      62  https://collection.sfomuseum.org/objects/1796443753/manifest/
 Exif.Image.ImageID                           Ascii      11  1796444669
-Exif.Image.DocumentName                      Ascii      56  https://static.sfomuseum.org/media/179/644/466/9/tiles/
+Exif.Image.DocumentName                      Ascii      56  https://static.sfomuseum.org/media/179/644/466/9/tiles/info.json
 Exif.Image.Copyright                         Ascii      11  SFO Museum
 ```
 
