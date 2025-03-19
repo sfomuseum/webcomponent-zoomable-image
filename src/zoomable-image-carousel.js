@@ -121,7 +121,7 @@ class ZoomableImageCarousel {
 	    item_node.setAttribute("class", "zoomable-carousel-item");
 	    item_node.setAttribute("zoomable-carousel-index", i);	    
 	    item_node.appendChild(img_node);
-	    
+
 	    carousel.appendChild(item_node);
 	}
 
@@ -155,10 +155,13 @@ class ZoomableImageCarousel {
 		'image-id': first_pic.getAttribute("zoomable-image-id"),
 		'image-url-ds': '',
 		'tiles-url': first_pic.getAttribute("zoomable-tiles-url"),
-		'manifest-url': first_pic.getAttribute("zoomable-manifest-url"),
 		'image-control': first_pic.getAttribute("zoomable-image-control"),				
 		'picture': first_pic,
 	    };
+
+	    if (first_pic.hasAttribute("zoomable-manifest-url")){
+		z_attrs['manifest-url'] = first_pic.getAttribute("zoomable-manifest-url");
+	    }
 	    
 	    z = this.make_zoomable_element(z_attrs);
 	    
@@ -171,10 +174,13 @@ class ZoomableImageCarousel {
 	     */
 	    
 	    z = new ZoomableImageElement();
-
+	    
 	    z.setAttribute("zoomable-image-id", first_pic.getAttribute("zoomable-image-id"));
 	    z.setAttribute("zoomable-tiles-url", first_pic.getAttribute("zoomable-tiles-url"));
-	    z.setAttribute("zoomable-manifest-url", first_pic.getAttribute("zoomable-manifest-url"));	    
+
+	    if (first_pic.hasAttribute("zoomable-manifest-url")){
+		z.setAttribute("zoomable-manifest-url", first_pic.getAttribute("zoomable-manifest-url"));	    
+	    }
 	    
 	    if (first_pic.hasAttribute("zoomable-image-control")){
 		z.setAttribute("zoomable-image-control", "true");
@@ -193,7 +199,6 @@ class ZoomableImageCarousel {
 	    for (var i=0; i < count_imgs; i++){
 		z.appendChild(img_els[i]);
 	    }
-
 	}
 
 	var wrapper = document.createElement("div");
@@ -211,7 +216,7 @@ class ZoomableImageCarousel {
 	    let tpl_content = tpl.content;
 	    wrapper.appendChild(tpl_content.cloneNode(true));
 	}
-	
+
 	wrapper.appendChild(z);
 	wrapper.appendChild(carousel);
 
@@ -259,14 +264,14 @@ class ZoomableImageCarousel {
 	var new_idx = this.index_for_id(id);
 
 	if (new_idx == -1){
-	    console.log("Can't determine new index");
+	    console.error("Can't determine new index");
 	    return false;
 	}
 
 	var current_el = visible_images[current_idx];
 
 	if (! current_el){
-	    console.log("Can't get element for index " + current_idx);
+	    console.error("Can't get element for index " + current_idx);
 	    return false;
 	}
 
@@ -446,6 +451,16 @@ class ZoomableImageCarousel {
 	zoomable_el.setAttribute("class", "zoomable-image");
 	zoomable_el.setAttribute("id", "zoomable-image-" + args["image-id"]);
 	zoomable_el.setAttribute("zoomable-image-id", args["image-id"]);
+
+	zoomable_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
+
+	if (args["manifest-url"]){
+	    zoomable_el.setAttribute("zoomable-manifest-url", args["manifest-url"]);
+	}
+	
+	if (args["image-control"]){
+	    zoomable_el.setAttribute("zoomable-image-control", args["image-control"]);		
+	}
 	
 	zoomable_el.appendChild(static_el);
 	zoomable_el.appendChild(tiles_el);
@@ -482,7 +497,17 @@ class ZoomableImageCarousel {
 	
 	var static_el = document.createElement("div");
 	static_el.setAttribute("class", "zoomable-static");
-	static_el.setAttribute("id", "zoomable-static-" + args["image-id"]);	   
+	static_el.setAttribute("id", "zoomable-static-" + args["image-id"]);
+
+	static_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
+
+	if (args["manifest-url"]){
+	    static_el.setAttribute("zoomable-manifest-url", args["manifest-url"]);
+	}
+	
+	if (args["image-control"]){
+	    static_el.setAttribute("zoomable-image-control", args["image-control"]);		
+	}
 	
 	static_el.appendChild(button_el);
 	static_el.appendChild(loading_el);
@@ -501,8 +526,14 @@ class ZoomableImageCarousel {
 	tiles_el.setAttribute("class", "zoomable-tiles");
 	tiles_el.setAttribute("id", "zoomable-tiles-" + args["image-id"]);
 	tiles_el.setAttribute("zoomable-tiles-url", args["tiles-url"]);
-	tiles_el.setAttribute("zoomable-manifest-url", args["manifest-url"]);
-	tiles_el.setAttribute("zoomable-image-control", args["image-control"]);		
+
+	if (args["manifest-url"]){
+	    tiles_el.setAttribute("zoomable-manifest-url", args["manifest-url"]);
+	}
+
+	if (args["image-control"]){
+	    tiles_el.setAttribute("zoomable-image-control", args["image-control"]);		
+	}
 	
 	tiles_el.appendChild(map_el);
 	return tiles_el;
@@ -513,9 +544,12 @@ class ZoomableImageCarousel {
 	var p = document.createElement("picture");
 	p.setAttribute("class", "zoomable-picture");
 	p.setAttribute("id", "zoomable-picture-" + args["image-id"]);
-	p.setAttribute("id", "zoomable-tiles-url-" + args["tiles-url"]);
-	p.setAttribute("id", "zoomable-manifest-url-" + args["manifest-url"]);	    	
+	p.setAttribute("zoomable-tiles-url", args["tiles-url"]);
 
+	if (args["manifest-url"]){
+	    p.setAttribute("zoomable-manifest-url", args["manifest-url"]);	    	
+	}
+	
 	if (args["image-control"]){
 	    p.setAttribute("zoomable-image-control", true);	    
 	}

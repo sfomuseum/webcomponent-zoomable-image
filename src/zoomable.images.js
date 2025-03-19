@@ -181,11 +181,11 @@ zoomable.images = (function(){
 			}
 
 		    } catch(err) {
-			console.log("Unable to determine (IIIF) quality", err);
+			console.error("Unable to determine (IIIF) quality", err);
 		    }
 		    
 		} else {
-		    console.log("Failed to derive IIIF tiles, status code returned was", rsp.status)
+		    console.error("Failed to derive IIIF tiles, status code returned was", rsp.status)
 		}
 
 		// END OF custom code to account for level0 disconnect
@@ -209,7 +209,7 @@ zoomable.images = (function(){
 	    var id = el.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
-		console.log("Element is missing zoomable-image-id attribute")
+		console.error("Element is missing zoomable-image-id attribute")
 		return false;
 	    }
 	    
@@ -242,7 +242,7 @@ zoomable.images = (function(){
 	    var id = el.getAttribute("zoomable-image-id");
 	    
 	    if (! id){
-		console.log("Element is missing zoomable-image-id attribute")
+		console.error("Element is missing zoomable-image-id attribute")
 		return false;
 	    }
 
@@ -258,7 +258,7 @@ zoomable.images = (function(){
 		zoom = 1;
 	    }
 
-	    console.log("Show tiles with ID", id, zoom);
+	    console.debug("Show tiles with ID", id, zoom);
 	    
 	    if (! quality){
 		quality = iiif_quality;
@@ -268,7 +268,7 @@ zoomable.images = (function(){
 	    var picture_id = "#zoomable-picture-" + id;		
 	    var tiles_id = "#zoomable-tiles-" +id;
 	    var map_id = "#zoomable-map-" +id;		
-	    
+
 	    var static_el = self.document_root.querySelector(static_id);
 	    var picture_el = self.document_root.querySelector(picture_id);	
 	    var tiles_el = self.document_root.querySelector(tiles_id);
@@ -472,7 +472,7 @@ zoomable.images = (function(){
 	'get_attribute': function(attr){
 
 	    var ot = self.document_root.querySelectorAll(".zoomable-image");
-	    
+
 	    if ((! ot) || (ot.length == 0)){
 		console.warn("Invalid count for .zoomable-image", ot.length);
 		return;
@@ -480,13 +480,12 @@ zoomable.images = (function(){
 	    
 	    ot = ot[0];
 	    
-	    var v = ot.getAttribute(attr);
-	    
-	    if (! v){
+	    if (! ot.hasAttribute(attr)){
+		console.warn("Missing attribute for .zoomable-image", attr);
 		return;
 	    }
 	    
-	    return v;	    
+	    return ot.getAttribute(attr);	    
 	},
 
 	dataURLToBlob: function(dataURL){
