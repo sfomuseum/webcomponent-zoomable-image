@@ -329,6 +329,29 @@ Note that "custom" elements depend on a locally-forked copy of the `leaflet.full
 
 * [src/zoomable.leaflet.fullscreen.js](src/zoomable.leaflet.fullscreen.js)
 
+## Events
+
+### ZoomableImageCarousel
+
+The `ZoomableImageCarousel` (or `ul@is="zoomable-image-carousel"`) WebComponent exposes the following events:
+
+#### zoomable_carousel_onchange
+
+The event is called when the image in focus is changed. For example:
+
+```
+<script type="text/javascript">
+
+document.addEventListener('zoomable_carousel_onchange', (event) => {
+     var current = document.getElementById("current");
+     if (current){
+	 current.innerText = "Current image ID is " + event.detail["image-id"];
+     }
+ });
+
+</script>
+```
+
 ## Saving tiled image crops
 
 ![](docs/images/webcomponent-zoomable-image-save-control.png)
