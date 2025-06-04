@@ -371,6 +371,14 @@ class ZoomableImageCarousel {
 	    if (h = w){
 		zoomable.images.resize_visible();
 	    }
+
+	    const customEvent = new CustomEvent('zoomable_carousel_onchange', {
+                detail: updated_attrs,
+                bubbles: true,
+                composed: true
+            });
+
+            this.dispatchEvent(customEvent);	    
 	};
     }
 
