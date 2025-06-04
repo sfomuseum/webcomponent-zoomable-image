@@ -12,6 +12,8 @@
 	<header>
 	    <nav><a href="index.html">Examples</a></nav>
 	</header>
+
+	<div id="current"></div>
 	
 	<template id="zoomable-image-carousel-template">
 	    <link rel="stylesheet" type="text/css" href="../../dist/zoomable.image.webcomponent.bundle.css" />
@@ -38,6 +40,16 @@
 	    </ul>
 	</zoomable-image-carousel-custom>
 
-	<script type="text/javascript" src="../../dist/zoomable.image.webcomponent.bundle.js"></script>	
+	<script type="text/javascript" src="../../dist/zoomable.image.webcomponent.bundle.js"></script>
+
+	<script type="text/javascript">
+	 document.addEventListener('zoomable_carousel_onchange', (event) => {
+	     var current = document.getElementById("current");
+	     if (current){
+		 current.innerText = "Current image ID is " + event.detail["image-id"];
+	     }
+	 });
+	</script>
+	
     </body>
 </html>

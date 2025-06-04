@@ -17,6 +17,8 @@
 	<header>
 	    <nav><a href="index.html">Examples</a></nav>
 	</header>
+
+	<div id="current"></div>
 	
 	<template id="zoomable-image-carousel-template">
 	    <link rel="stylesheet" type="text/css" href="../../lib/leaflet.css" />
@@ -57,6 +59,16 @@
 	<script type="text/javascript" src="../../src/zoomable.leaflet.fullscreen.js"></script>
 	<script type="text/javascript" src="../../src/zoomable.images.js"></script>
 	<script type="text/javascript" src="../../src/zoomable-image.js"></script>
-	<script type="text/javascript" src="../../src/zoomable-image-carousel.js"></script>	
+	<script type="text/javascript" src="../../src/zoomable-image-carousel.js"></script>
+
+	<script type="text/javascript">
+	 document.addEventListener('zoomable_carousel_onchange', (event) => {
+	     var current = document.getElementById("current");
+	     if (current){
+		 current.innerText = "Current image ID is " + event.detail["image-id"];
+	     }
+	 });
+	</script>
+	
     </body>
 </html>
