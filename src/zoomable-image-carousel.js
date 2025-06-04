@@ -378,10 +378,7 @@ class ZoomableImageCarousel {
                 composed: true
             });
 
-	    console.log("EVENT", customEvent);
-            this.dispatchEvent(customEvent);
-	    console.log("SENT");
-	    
+            this.dispatchEvent(customEvent);	    
 	};
     }
 
